@@ -1,8 +1,8 @@
 import os
 import sys
 from time import sleep
-import dotenv
 
+import dotenv
 import requests
 
 dotenv.load_dotenv()
