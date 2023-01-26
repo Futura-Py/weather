@@ -1,10 +1,13 @@
 import os
 import sys
 from time import sleep
+import dotenv
 
 import requests
 
-TOKEN = "f2c9ba5917df10d29b7d7f97a4cce627"
+dotenv.load_dotenv()
+
+TOKEN = os.getenv("TOKEN")
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather?"
 BREAK = "\n\n=====\n\n"
 
