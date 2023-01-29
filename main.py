@@ -5,7 +5,7 @@ import requests
 
 
 TOKEN = "02a48fc85823393c2c20c321febeffb8"
-BASE_URL = "https://api.openweathermap.org/data/2.5/weather?"
+BASE_URL = "https://api.openweathermap.org/data/2.5/weather?q="
 BREAK = "\n\n=====\n\n"
 
 
