@@ -31,48 +31,6 @@ def exitQuery():
         clearScreen()
         OWMCITY()
 
-
-def OWMCITY():
-    # City Name request
-    global CITY
-    CITY = input(
-        "Enter City Name (should be in compliance to OpenWeatherMap's City Index): "
-    )
-    if CITY == "exit":
-        clearScreen()
-        print("Three")
-        sleep(1)
-        clearScreen()
-        print("Two")
-        sleep(1)
-        clearScreen()
-        print("One.")
-        sleep(1)
-        clearScreen()
-        print("Exiting...")
-        sleep(0.5)
-        exit()
-
-    else:
-        pass
-    # The URL in actuality be like:
-    URL = BASE_URL + "q=" + CITY + "&appid=" + TOKEN
-
-    # PROD: Request Response
-    global resp_PROD
-    resp_PROD = requests.get(URL)
-    if resp_PROD.status_code == 200:
-        pass
-    else:
-        raise TypeError("Oops, wrong city name or code?")
-
-    global data
-    data = resp_PROD.json()
-
-
-OWMCITY()
-
-
 def data_processing():
     main = data["main"]
     humidity = main["humidity"]
@@ -119,9 +77,45 @@ def data_processing():
         print(f"Visibility: {visibility} m (or) {visibility_new} km")
 
     printData()
+        
+def OWMCITY():
+    # City Name request
+    global CITY
+    CITY = input(
+        "Enter City Name (should be in compliance to OpenWeatherMap's City Index): "
+    )
+    if CITY == "exit":
+        clearScreen()
+        print("Three")
+        sleep(1)
+        clearScreen()
+        print("Two")
+        sleep(1)
+        clearScreen()
+        print("One.")
+        sleep(1)
+        clearScreen()
+        print("Exiting...")
+        sleep(0.5)
+        exit()
 
+    else:
+        pass
+    # The URL in actuality be like:
+    URL = BASE_URL + "q=" + CITY + "&appid=" + TOKEN
 
-data_processing()
+    # PROD: Request Response
+    global resp_PROD
+    resp_PROD = requests.get(URL)
+    if resp_PROD.status_code == 200:
+        pass
+    else:
+        raise TypeError("Oops, wrong city name or code?")
 
+    global data
+    data = resp_PROD.json()
+    
+    data_processing()
+    exitQuery()
 
-exitQuery()
+OWMCITY()
