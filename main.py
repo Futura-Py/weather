@@ -7,7 +7,7 @@ import requests
 TOKEN = "c439e1209216cc7e7c73a3a8d1d12bfd"
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather?"
 BREAK = "\n\n=====\n\n"
-TOKEN = os.getenv("TOKEN")
+# TOKEN = os.getenv("TOKEN")
 
 
 def breakliner():
