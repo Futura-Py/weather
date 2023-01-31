@@ -66,11 +66,9 @@ def OWMCITY():
     else:
         raise TypeError("Oops, wrong city name or code?")
 
-    breakliner()
     global data
     data = resp_PROD.json()
-    print(data)
-    breakliner()
+
 
 
 OWMCITY()
@@ -91,10 +89,34 @@ def data_processing():
         print("Temperature: ", temp, "°C")
         print("Minimum Temperature: ", temp_min, "°C")
         print("Maximum Temperature: ", temp_max, "°C")
-
-    print(ktc(temp, temp_min, temp_max))
-    print(data["weather"][0]["main"])
-
+    CITY = data["name"]
+    sys = data['sys']
+    country = sys['country']
+    CITY2 = CITY + ',' + ' ' + country
+    if CITY == CITY2:
+        pass
+    else:
+        CITY = data["name"]
+        sys = data['sys']
+        country = sys['country']
+        CITY2 = CITY + ',' + ' ' + country 
+        
+    w_main = data["weather"][0]["main"]
+    w_desc = data["weather"][0]["description"]
+    pressure = main["pressure"]
+    visibility = data["visibility"]
+    visibility_new = visibility/1000
+    wind = data['wind']['speed']
+    def printData():
+        breakliner()
+        print(f"{CITY2:-^30}")
+        print(f"Weather: {w_main}:- {w_desc}")
+        ktc(temp, temp_min, temp_max)
+        print(f"Humidity: {humidity}%")
+        print(f"Pressure: {pressure} hPa")
+        print(f"Wind speed: {wind} m/s")
+        print(f"Visibility: {visibility} m (or) {visibility_new} km")
+    printData()
 
 data_processing()
 
