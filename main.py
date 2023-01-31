@@ -70,7 +70,6 @@ def OWMCITY():
     data = resp_PROD.json()
 
 
-
 OWMCITY()
 
 
@@ -89,24 +88,26 @@ def data_processing():
         print("Temperature: ", temp, "°C")
         print("Minimum Temperature: ", temp_min, "°C")
         print("Maximum Temperature: ", temp_max, "°C")
+
     CITY = data["name"]
-    sys = data['sys']
-    country = sys['country']
-    CITY2 = CITY + ',' + ' ' + country
+    sys = data["sys"]
+    country = sys["country"]
+    CITY2 = CITY + "," + " " + country
     if CITY == CITY2:
         pass
     else:
         CITY = data["name"]
-        sys = data['sys']
-        country = sys['country']
-        CITY2 = CITY + ',' + ' ' + country 
-        
+        sys = data["sys"]
+        country = sys["country"]
+        CITY2 = CITY + "," + " " + country
+
     w_main = data["weather"][0]["main"]
     w_desc = data["weather"][0]["description"]
     pressure = main["pressure"]
     visibility = data["visibility"]
-    visibility_new = visibility/1000
-    wind = data['wind']['speed']
+    visibility_new = visibility / 1000
+    wind = data["wind"]["speed"]
+
     def printData():
         breakliner()
         print(f"{CITY2:-^30}")
@@ -116,7 +117,9 @@ def data_processing():
         print(f"Pressure: {pressure} hPa")
         print(f"Wind speed: {wind} m/s")
         print(f"Visibility: {visibility} m (or) {visibility_new} km")
+
     printData()
+
 
 data_processing()
 
