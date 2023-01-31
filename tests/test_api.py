@@ -1,6 +1,7 @@
 import os
 import unittest
 from time import sleep
+
 import requests
 from dotenv import load_dotenv
 
@@ -24,15 +25,17 @@ class testAPILoad(unittest.TestCase):
             raise TypeError("Oops, wrong city name or code?")
             sleep(5)
             exit()
+
     def test_data_processcode(self):
         TOKEN = os.getenv("TOKEN")
         data = resp_PROD.json()
         main = data["main"]
         humidity = main["humidity"]
         pressure = main["pressure"]
-        temp = main['temp']
-        temp_min = main['temp_min']
-        temp_max = main['temp_max']
+        temp = main["temp"]
+        temp_min = main["temp_min"]
+        temp_max = main["temp_max"]
+
         def ktc(temp, temp_min, temp_max):
             temp = temp - 273.15
             temp_min = temp_min - 273.15
@@ -40,10 +43,10 @@ class testAPILoad(unittest.TestCase):
             print("Temperature: ", temp, "°C")
             print("Minimum Temperature: ", temp_min, "°C")
             print("Maximum Temperature: ", temp_max, "°C")
-        print(ktc(temp, temp_min, temp_max))
-        print(data['weather'][0]['main'])
 
-        
+        print(ktc(temp, temp_min, temp_max))
+        print(data["weather"][0]["main"])
+
 
 if __name__ == "__main__":
     unittest.main()

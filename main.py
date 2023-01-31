@@ -1,16 +1,13 @@
 import os
-from time import sleep
 import sys
+from time import sleep
+
 import requests
-
-
 
 TOKEN = "c439e1209216cc7e7c73a3a8d1d12bfd"
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather?"
 BREAK = "\n\n=====\n\n"
 TOKEN = os.getenv("TOKEN")
-
-
 
 
 def breakliner():
@@ -38,7 +35,9 @@ def exitQuery():
 def OWMCITY():
     # City Name request
     global CITY
-    CITY = input("Enter City Name (should be in compliance to OpenWeatherMap's City Index): ")
+    CITY = input(
+        "Enter City Name (should be in compliance to OpenWeatherMap's City Index): "
+    )
     if CITY == "exit":
         clearScreen()
         print("Three")
@@ -73,17 +72,18 @@ def OWMCITY():
     print(data)
     breakliner()
 
-OWMCITY()
 
+OWMCITY()
 
 
 def data_processing():
     main = data["main"]
     humidity = main["humidity"]
     pressure = main["pressure"]
-    temp = main['temp']
-    temp_min = main['temp_min']
-    temp_max = main['temp_max']
+    temp = main["temp"]
+    temp_min = main["temp_min"]
+    temp_max = main["temp_max"]
+
     def ktc(temp, temp_min, temp_max):
         temp = temp - 273.15
         temp_min = temp_min - 273.15
@@ -91,8 +91,10 @@ def data_processing():
         print("Temperature: ", temp, "°C")
         print("Minimum Temperature: ", temp_min, "°C")
         print("Maximum Temperature: ", temp_max, "°C")
+
     print(ktc(temp, temp_min, temp_max))
-    print(data['weather'][0]['main'])
+    print(data["weather"][0]["main"])
+
 
 data_processing()
 
