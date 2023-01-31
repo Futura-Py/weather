@@ -1,10 +1,10 @@
 import os
 import unittest
 from time import sleep
-
 import requests
 from dotenv import load_dotenv
 
+CITY = "Norway"  # test *only*
 
 class testAPILoad(unittest.TestCase):
     load_dotenv()
@@ -15,11 +15,12 @@ class testAPILoad(unittest.TestCase):
         return TOKEN
 
     def test_request(self):
-        CITY = "Norway"  # test *only*
         TOKEN = os.getenv("TOKEN")
         BASE_URL = "https://api.openweathermap.org/data/2.5/weather?"
         URL = BASE_URL + "q=" + CITY + "&appid=" + TOKEN
         resp_PROD = requests.get(URL)
+        global data
+        data = resp_PROD.json()
         if resp_PROD.status_code == 200:
             print(resp_PROD.status_code)
             pass
@@ -27,7 +28,27 @@ class testAPILoad(unittest.TestCase):
             raise TypeError("Oops, wrong city name or code?")
             sleep(5)
             exit()
+        return CITY
+    def test_pyowm(self):
+        TOKEN = os.getenv("TOKEN")
 
+        main = data["main"]
+        humidity = main["humidity"]
+        pressure = main["pressure"]
+        temp = main['temp']
+        temp_min = main['temp_min']
+        temp_max = main['temp_max']
+        def ktc(temp, temp_min, temp_max):
+            temp = temp - 273.15
+            temp_min = temp_min - 273.15
+            temp_max = temp_max - 273.15
+            print("Temperature: ", temp, "°C")
+            print("Minimum Temperature: ", temp_min, "°C")
+            print("Maximum Temperature: ", temp_max, "°C")
+        print(ktc(temp, temp_min, temp_max))
+        print(data['weather'][0]['main'])
+
+        
 
 if __name__ == "__main__":
     unittest.main()
