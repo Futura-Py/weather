@@ -5,8 +5,7 @@ from time import sleep
 import requests
 from dotenv import load_dotenv
 
-TOKEN = os.getenv("TOKEN")
-print(TOKEN)
+TOKEN = "c439e1209216cc7e7c73a3a8d1d12bfd"
 CITY = "Norway"  # test *only*
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather?"
 URL = BASE_URL + "q=" + CITY + "&appid=" + TOKEN

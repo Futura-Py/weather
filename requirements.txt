@@ -1,6 +1,5 @@
 pyowm
 requests
 python-dotenv
-python-unittest
 isort
 black

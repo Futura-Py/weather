@@ -8,3 +8,9 @@ black:
 
 install:
     python3 -m pip install -r requirements.txt
+
+run:
+    python3 main.py
+
+run-tests:
+    python3 -m unittest tests/test_*.py
