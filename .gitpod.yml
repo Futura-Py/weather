@@ -3,12 +3,12 @@
 # and commit this file to your remote git repository to share the goodness with others.
 
 # Learn more from ready-to-use templates: https://www.gitpod.io/docs/introduction/getting-started/quickstart
-
+image: gitpod/workspace-full-vnc
 tasks:
   - name: "Install all packages"
     command: |
         brew install just
         just install
-        sudo apt-get install -y python-unittest2
+        sudo apt-get install -y python3-unittest2
 
 
