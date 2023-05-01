@@ -1,6 +1,8 @@
 import os
 import sys
 from time import sleep
+from tkinter import *
+from tkinter import ttk
 
 import requests
 
@@ -30,6 +32,7 @@ def exitQuery():
     elif exitQ == "n":
         clearScreen()
         OWMCITY()
+
 
 def data_processing():
     main = data["main"]
@@ -77,13 +80,12 @@ def data_processing():
         print(f"Visibility: {visibility} m (or) {visibility_new} km")
 
     printData()
-        
+
+
 def OWMCITY():
     # City Name request
     global CITY
-    CITY = input(
-        "Enter City Name (should be in compliance to OpenWeatherMap's City Index): "
-    )
+    CITY = searchbar.get()
     if CITY == "exit":
         clearScreen()
         print("Three")
@@ -114,8 +116,28 @@ def OWMCITY():
 
     global data
     data = resp_PROD.json()
-    
+
     data_processing()
     exitQuery()
 
-OWMCITY()
+
+root = Tk()
+
+
+root.geometry("700x250")
+
+heading = Label(root, text="Weather", font="Helvetica 13").place(relx=0.5, rely=0.1, anchor=CENTER)
+
+searchbar = Entry(root, width=42)
+searchbar.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+
+label = Label(root, text="", font=("Helvetica 13"))
+label.pack()
+
+
+ttk.Button(root, text="Search for City", command=OWMCITY).place(
+    relx=0.7, rely=0.5, anchor=CENTER
+)
+
+root.mainloop()
