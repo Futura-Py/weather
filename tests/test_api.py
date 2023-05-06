@@ -16,7 +16,7 @@ class testAPILoad(unittest.TestCase):
     load_dotenv()
 
     def test_request(self):
-        TOKEN = os.getenv("TOKEN")
+        os.getenv("TOKEN")
         if resp_PROD.status_code == 200:
             print(resp_PROD.status_code)
             pass
@@ -26,11 +26,11 @@ class testAPILoad(unittest.TestCase):
             exit()
 
     def test_data_processcode(self):
-        TOKEN = os.getenv("TOKEN")
+        os.getenv("TOKEN")
         data = resp_PROD.json()
         main = data["main"]
-        humidity = main["humidity"]
-        pressure = main["pressure"]
+        main["humidity"]
+        main["pressure"]
         temp = main["temp"]
         temp_min = main["temp_min"]
         temp_max = main["temp_max"]
