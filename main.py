@@ -2,23 +2,10 @@ from __future__ import annotations
 
 from platform import system
 from tkinter import Menu, Tk, messagebox
-from tkinter.ttk import Button, Entry, Frame, Label, Style
+from tkinter.ttk import Button, Entry, Frame, Label
 
-from requests import Response, get
-
-
-def self_return_decorator(func, *args, **kwargs):
-    # Allows for chaining of methods
-    # Example:
-    # App.OWMCITY().method1().method2()
-    # This does assume however that the methods don't have any return values
-    # If they do, then the return value will not be returned
-    # This is because the return value is the App object, not the return value of the method
-    def self_returner(self=None, *args, **kwargs):
-        func(self, *args, **kwargs)
-        return self
-
-    return self_returner
+from requests import Response
+from requests import get as requests_get
 
 
 class App(Tk):
@@ -38,8 +25,6 @@ class App(Tk):
             self.menubar.add_cascade(label="App", menu=self.app_menu)
         self.menubar.add_command(label="About Weather", command=self.about)
         self.config(menu=self.menubar)
-
-        Style().theme_use("clam")
 
         # Set up window
         self.title("Weather")
@@ -69,7 +54,6 @@ class App(Tk):
         self.resize_app()
         self.deiconify()
 
-    @self_return_decorator
     def about(self) -> App:
         """Display a messagebox with information about the app."""
         messagebox.showinfo(
@@ -77,8 +61,8 @@ class App(Tk):
             "Weather is a simple weather app that uses the OpenWeatherMap API to get the weather for a given city.",
             parent=self,
         )
+        return self
 
-    @self_return_decorator
     def resize_app(self) -> App:
         """Use tkinter to detect the minimum size of the app, get the center of the screen, and place the app there."""
         # Update widgets so minimum size is accurate
@@ -96,12 +80,12 @@ class App(Tk):
         # Place app and make the minimum size the actual minimum size (non-infringable)
         self.geometry(f"{minimum_width}x{minimum_height}+{x_coords}+{y_coords}")
         self.wm_minsize(minimum_width, minimum_height)
+        return self
 
     def exit_app(self) -> None:
         """Exit the app."""
         self.destroy()
 
-    @self_return_decorator
     def OWMCITY(self) -> App:
         """Get the weather for a given city using the OpenWeatherMap API and display it in a label."""
         # Get API key
@@ -111,7 +95,7 @@ class App(Tk):
         city: str = self.searchbar.get()
 
         # Send request to OpenWeatherMap API
-        response: Response = get(
+        response: Response = requests_get(
             f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}"
         )
         if response.status_code != 200:
@@ -120,10 +104,11 @@ class App(Tk):
 
         # Get temperature in Celsius
         temperature_kelvin: float = response.json()["main"]["temp"]
-        temperature_celsius: float = temperature_kelvin - 273.15
+        temperature_celsius = temperature_kelvin - 273.15
 
         # Put in label
         self.label.configure(text=f"{temperature_celsius:.2f}°C")
+        return self
 
 
 if __name__ == "__main__":
