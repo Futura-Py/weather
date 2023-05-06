@@ -1,121 +1,116 @@
-import os
-import sys
-from time import sleep
+from __future__ import annotations
 
-import requests
+from platform import system
+from tkinter import Menu, Tk, messagebox
+from tkinter.ttk import Button, Entry, Frame, Label
 
-TOKEN = "c439e1209216cc7e7c73a3a8d1d12bfd"
-BASE_URL = "https://api.openweathermap.org/data/2.5/weather?"
-BREAK = "\n\n=====\n\n"
-# TOKEN = os.getenv("TOKEN")
+from requests import Response
+from requests import get as requests_get
 
 
-def breakliner():
-    print(f"{BREAK:-^30}")
-    return
+class App(Tk):
+    def __init__(self):
+        super().__init__()
+        self.withdraw()
+
+        # Set up Menubar
+        if system() == "Darwin":
+            self.menubar = Menu(self)
+            # Apple menus have special names and special commands
+            self.app_menu = Menu(self.menubar, tearoff=0, name="apple")
+            self.menubar.add_cascade(label="App", menu=self.app_menu)
+        else:
+            self.menubar = Menu(self)
+            self.app_menu = Menu(self.menubar, tearoff=0)
+            self.menubar.add_cascade(label="App", menu=self.app_menu)
+        self.menubar.add_command(label="About Weather", command=self.about)
+        self.config(menu=self.menubar)
+
+        # Set up window
+        self.title("Weather")
+        self.resizable(False, False)
+        self.configure(bg="white")
+
+        # Set up widgets
+        self.main_frame = Frame(self, padding=10)
+        self.main_frame.pack()
+
+        heading = Label(self.main_frame, text="Weather", font="Helvetica 13")
+        heading.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
+
+        self.searchbar = Entry(self.main_frame, width=42)
+        self.searchbar.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
+
+        self.label = Label(self.main_frame, text="", font=("Helvetica 13"))
+        self.label.grid(row=2, column=0, columnspan=2)
+
+        Button(self.main_frame, text="Search for City", command=self.OWMCITY).grid(
+            row=3, column=0, padx=10, pady=10
+        )
+        Button(self.main_frame, text="Exit", command=self.exit_app).grid(
+            row=3, column=1, padx=10, pady=10
+        )
+
+        self.resize_app()
+        self.deiconify()
+
+    def about(self) -> App:
+        """Display a messagebox with information about the app."""
+        messagebox.showinfo(
+            "About Weather",
+            "Weather is a simple weather app that uses the OpenWeatherMap API to get the weather for a given city.",
+            parent=self,
+        )
+        return self
+
+    def resize_app(self) -> App:
+        """Use tkinter to detect the minimum size of the app, get the center of the screen, and place the app there."""
+        # Update widgets so minimum size is accurate
+        self.update_idletasks()
+
+        # Get minimum size
+        minimum_width: int = self.winfo_reqwidth()
+        minimum_height: int = self.winfo_reqheight()
+
+        # Get center of screen based on minimum size
+        x_coords = int(self.winfo_screenwidth() / 2 - minimum_width / 2)
+        y_coords = int(self.winfo_screenheight() / 2 - minimum_height / 2) - 20
+        # `-20` should deal with Dock on macOS and looks good on other OS's
+
+        # Place app and make the minimum size the actual minimum size (non-infringable)
+        self.geometry(f"{minimum_width}x{minimum_height}+{x_coords}+{y_coords}")
+        self.wm_minsize(minimum_width, minimum_height)
+        return self
+
+    def exit_app(self) -> None:
+        """Exit the app."""
+        self.destroy()
+
+    def OWMCITY(self) -> App:
+        """Get the weather for a given city using the OpenWeatherMap API and display it in a label."""
+        # Get API key
+        api_key: str = "c439e1209216cc7e7c73a3a8d1d12bfd"
+
+        # Get city name
+        city: str = self.searchbar.get()
+
+        # Send request to OpenWeatherMap API
+        response: Response = requests_get(
+            f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}"
+        )
+        if response.status_code != 200:
+            self.label.configure(text="City not found")
+            return
+
+        # Get temperature in Celsius
+        temperature_kelvin: float = response.json()["main"]["temp"]
+        temperature_celsius = temperature_kelvin - 273.15
+
+        # Put in label
+        self.label.configure(text=f"{temperature_celsius:.2f}°C")
+        return self
 
 
-def clearScreen():
-    if sys.platform == "windows":
-        os.system("cls")
-    else:
-        os.system("clear")
-    return
-
-
-def exitQuery():
-    exitQ = input("Exit? ")
-    if exitQ == "y":
-        exit()
-    elif exitQ == "n":
-        clearScreen()
-        OWMCITY()
-
-def data_processing():
-    main = data["main"]
-    humidity = main["humidity"]
-    pressure = main["pressure"]
-    temp = main["temp"]
-    temp_min = main["temp_min"]
-    temp_max = main["temp_max"]
-
-    def ktc(temp, temp_min, temp_max):
-        temp = temp - 273.15
-        temp_min = temp_min - 273.15
-        temp_max = temp_max - 273.15
-        print("Temperature: ", temp, "°C")
-        print("Minimum Temperature: ", temp_min, "°C")
-        print("Maximum Temperature: ", temp_max, "°C")
-
-    CITY = data["name"]
-    sys = data["sys"]
-    country = sys["country"]
-    CITY2 = CITY + "," + " " + country
-    if CITY == CITY2:
-        pass
-    else:
-        CITY = data["name"]
-        sys = data["sys"]
-        country = sys["country"]
-        CITY2 = CITY + "," + " " + country
-
-    w_main = data["weather"][0]["main"]
-    w_desc = data["weather"][0]["description"]
-    pressure = main["pressure"]
-    visibility = data["visibility"]
-    visibility_new = visibility / 1000
-    wind = data["wind"]["speed"]
-
-    def printData():
-        breakliner()
-        print(f"{CITY2:-^30}")
-        print(f"Weather: {w_main}:- {w_desc}")
-        ktc(temp, temp_min, temp_max)
-        print(f"Humidity: {humidity}%")
-        print(f"Pressure: {pressure} hPa")
-        print(f"Wind speed: {wind} m/s")
-        print(f"Visibility: {visibility} m (or) {visibility_new} km")
-
-    printData()
-        
-def OWMCITY():
-    # City Name request
-    global CITY
-    CITY = input(
-        "Enter City Name (should be in compliance to OpenWeatherMap's City Index): "
-    )
-    if CITY == "exit":
-        clearScreen()
-        print("Three")
-        sleep(1)
-        clearScreen()
-        print("Two")
-        sleep(1)
-        clearScreen()
-        print("One.")
-        sleep(1)
-        clearScreen()
-        print("Exiting...")
-        sleep(0.5)
-        exit()
-
-    else:
-        pass
-    # The URL in actuality be like:
-    URL = BASE_URL + "q=" + CITY + "&appid=" + TOKEN
-
-    # PROD: Request Response
-    global resp_PROD
-    resp_PROD = requests.get(URL)
-    if resp_PROD.status_code == 200:
-        pass
-    else:
-        raise TypeError("Oops, wrong city name or code?")
-
-    global data
-    data = resp_PROD.json()
-    
-    data_processing()
-    exitQuery()
-
-OWMCITY()
+if __name__ == "__main__":
+    app = App()
+    app.mainloop()
