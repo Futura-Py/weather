@@ -31,7 +31,7 @@ jobs:
       run: |
         python3 --version
         pip3 install --upgrade pip wheel
-        pip3 install requirements.txt
+        pip3 install -r requirements.txt
         pip3 install pyinstaller
         pyinstaller weather.spec
       
@@ -63,7 +63,7 @@ jobs:
     - name: Install requirements
       run: |
         pip3 install pyinstaller
-        pip3 install requirements.txt
+        pip3 install -r requirements.txt
         sudo apt install python3-tk python3-pil.imagetk
 
     - name: Build
@@ -93,7 +93,7 @@ jobs:
       run: |
         python3 --version
         pip install --upgrade pip wheel
-        pip install requirements.txt
+        pip install -r requirements.txt
         pip install pyinstaller
         pyinstaller windows-weather.spec
       
