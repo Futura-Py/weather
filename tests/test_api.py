@@ -1,4 +1,5 @@
 from unittest import TestCase, main
+
 from requests import get
 
 TOKEN = "c439e1209216cc7e7c73a3a8d1d12bfd"
@@ -9,7 +10,6 @@ resp_PROD = get(URL)
 
 
 class testAPILoad(TestCase):
-
     def test_data_processcode(self):
         data = resp_PROD.json()
         main = data["main"]

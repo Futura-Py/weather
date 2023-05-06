@@ -4,12 +4,8 @@ from platform import system
 from tkinter import Menu, Tk, messagebox
 from tkinter.ttk import Button, Entry, Frame, Label, Style
 
-import requests
+from requests import Response, get
 
-SYSTEM = str(system())
-
-# NOTE: Before making any commits, please run the following command:
-# black .; isort .; ruff . --fix
 
 def self_return_decorator(func, *args, **kwargs):
     # Allows for chaining of methods
@@ -107,14 +103,15 @@ class App(Tk):
 
     @self_return_decorator
     def OWMCITY(self) -> App:
+        """Get the weather for a given city using the OpenWeatherMap API and display it in a label."""
         # Get API key
-        api_key = "c439e1209216cc7e7c73a3a8d1d12bfd"
+        api_key: str = "c439e1209216cc7e7c73a3a8d1d12bfd"
 
         # Get city name
-        city = self.searchbar.get()
+        city: str = self.searchbar.get()
 
         # Send request to OpenWeatherMap API
-        response = requests.get(
+        response: Response = get(
             f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}"
         )
         if response.status_code != 200:
@@ -122,8 +119,8 @@ class App(Tk):
             return
 
         # Get temperature in Celsius
-        temperature_kelvin = response.json()["main"]["temp"]
-        temperature_celsius = temperature_kelvin - 273.15
+        temperature_kelvin: float = response.json()["main"]["temp"]
+        temperature_celsius: float = temperature_kelvin - 273.15
 
         # Put in label
         self.label.configure(text=f"{temperature_celsius:.2f}°C")
