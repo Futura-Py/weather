@@ -1,13 +1,48 @@
-from tkinter import Tk
+from __future__ import annotations
+
+from platform import system
+from tkinter import Menu, Tk, messagebox
 from tkinter.ttk import Button, Entry, Frame, Label, Style
 
 import requests
+
+SYSTEM = str(system())
+
+# NOTE: Before making any commits, please run the following command:
+# black .; isort .; ruff . --fix
+
+def self_return_decorator(func, *args, **kwargs):
+    # Allows for chaining of methods
+    # Example:
+    # App.OWMCITY().method1().method2()
+    # This does assume however that the methods don't have any return values
+    # If they do, then the return value will not be returned
+    # This is because the return value is the App object, not the return value of the method
+    def self_returner(self=None, *args, **kwargs):
+        func(self, *args, **kwargs)
+        return self
+
+    return self_returner
 
 
 class App(Tk):
     def __init__(self):
         super().__init__()
         self.withdraw()
+
+        # Set up Menubar
+        if system() == "Darwin":
+            self.menubar = Menu(self)
+            # Apple menus have special names and special commands
+            self.app_menu = Menu(self.menubar, tearoff=0, name="apple")
+            self.menubar.add_cascade(label="App", menu=self.app_menu)
+        else:
+            self.menubar = Menu(self)
+            self.app_menu = Menu(self.menubar, tearoff=0)
+            self.menubar.add_cascade(label="App", menu=self.app_menu)
+        self.menubar.add_command(label="About Weather", command=self.about)
+        self.config(menu=self.menubar)
+
         Style().theme_use("clam")
 
         # Set up window
@@ -38,7 +73,17 @@ class App(Tk):
         self.resize_app()
         self.deiconify()
 
-    def resize_app(self) -> None:
+    @self_return_decorator
+    def about(self) -> App:
+        """Display a messagebox with information about the app."""
+        messagebox.showinfo(
+            "About Weather",
+            "Weather is a simple weather app that uses the OpenWeatherMap API to get the weather for a given city.",
+            parent=self,
+        )
+
+    @self_return_decorator
+    def resize_app(self) -> App:
         """Use tkinter to detect the minimum size of the app, get the center of the screen, and place the app there."""
         # Update widgets so minimum size is accurate
         self.update_idletasks()
@@ -56,11 +101,12 @@ class App(Tk):
         self.geometry(f"{minimum_width}x{minimum_height}+{x_coords}+{y_coords}")
         self.wm_minsize(minimum_width, minimum_height)
 
-    def exit_app(self):
+    def exit_app(self) -> None:
         """Exit the app."""
         self.destroy()
 
-    def OWMCITY(self):
+    @self_return_decorator
+    def OWMCITY(self) -> App:
         # Get API key
         api_key = "c439e1209216cc7e7c73a3a8d1d12bfd"
 
