@@ -1,32 +1,16 @@
-import os
-import unittest
-from time import sleep
-
-import requests
-from dotenv import load_dotenv
+from unittest import TestCase, main
+from requests import get
 
 TOKEN = "c439e1209216cc7e7c73a3a8d1d12bfd"
 CITY = "Norway"  # test *only*
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather?"
 URL = BASE_URL + "q=" + CITY + "&appid=" + TOKEN
-resp_PROD = requests.get(URL)
+resp_PROD = get(URL)
 
 
-class testAPILoad(unittest.TestCase):
-    load_dotenv()
-
-    def test_request(self):
-        os.getenv("TOKEN")
-        if resp_PROD.status_code == 200:
-            print(resp_PROD.status_code)
-            pass
-        else:
-            raise TypeError("Oops, wrong city name or code?")
-            sleep(5)
-            exit()
+class testAPILoad(TestCase):
 
     def test_data_processcode(self):
-        os.getenv("TOKEN")
         data = resp_PROD.json()
         main = data["main"]
         main["humidity"]
@@ -48,4 +32,4 @@ class testAPILoad(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    main()

@@ -1,6 +1,4 @@
-pyowm
 requests
-python-dotenv
 isort
 black
 ruff

@@ -128,5 +128,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Ruff
+.ruff-cache/
+
 # Mac stuff
 .DS_Store

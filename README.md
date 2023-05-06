@@ -31,17 +31,9 @@ To search for the weather in a city, simply enter the name of the city in the se
 
 To exit the app, click the "Exit" button. 
 
-## Contributing
-
-Contributions are welcome! If you find a bug or have an idea for a new feature, please open an issue or submit a pull request. 
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
-
 # Documentation
 
-Additionally, the code contains several functions and classes:
+Additionally, the code contains several functions, methods, and classes:
 
 ### `self_return_decorator()`
 A decorator function that allows for chaining of methods. This function takes a method as an argument and returns a new function that calls the original method and returns the instance of the class.
@@ -61,7 +53,12 @@ A method that exits the app.
 ### `.OWMCITY()`
 A method that sends a request to the OpenWeatherMap API to get the weather for a given city and displays the temperature in Celsius in the label. If the city is not found, the label displays an error message.
 
-## Final Notes
+# Final Notes
+
+## Contributing
+
+Contributions are welcome! If you find a bug or have an idea for a new feature, please open an issue or submit a pull request. 
+## Pre-Commit Actions
 
 Before making any commits, run the following command:
 
@@ -70,3 +67,7 @@ black .; isort .; ruff . --fix
 ```
 
 This will automatically format the code to follow the PEP 8 style guide and run several linters to catch any errors or warnings
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
