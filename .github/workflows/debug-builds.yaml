@@ -1,0 +1,107 @@
+name: Build and package python Weather
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    env:
+      PYTHONVERSION: "3.11.1"
+      MACOSX_DEPLOYMENT_TARGET: "10.9"
+      PYI_BUILD_MODE: "onedir"
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache Python download
+      id: cache-python-download
+      uses: actions/cache@v3
+      with:
+        path: ~/python.pkg
+        key: macOS-Python-${{ env.PYTHON_VERSION }}
+
+    - name: Get Python
+      run: |
+       curl https://www.python.org/ftp/python/${PYTHONVERSION}/python-${PYTHONVERSION}-macos11.pkg -o ~/python.pkg
+
+    - name: Install Python
+      run: sudo installer -pkg ~/python.pkg -target /
+
+    - name: Install Python dependencies and build
+      run: |
+        python3 --version
+        pip3 install --upgrade pip wheel
+        pip3 install -r requirements.txt
+        pip3 install pyinstaller
+        pyinstaller weather.spec
+      
+    - name: Log files
+      run: |
+        ls dist
+        ls dist/Weather
+        mkdir Weather
+        mv ./dist/Weather.app ./Weather/Weather.app
+        ln -s /Applications ./Weather/Applications
+        hdiutil create -srcfolder ./Weather Weather.dmg
+    
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with: 
+        name: Weather-Mac.zip
+        path: Weather
+        
+  build-linux:
+    runs-on: ubuntu-latest
+    env:
+      PYI_BUILD_MODE: "onefile"
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install requirements
+      run: |
+        pip3 install pyinstaller
+        pip3 install -r requirements.txt
+        sudo apt install python3-tk python3-pil.imagetk
+
+    - name: Build
+      run: pyinstaller weather.spec
+      
+    - name: Log files
+      run: |
+        ls dist
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with: 
+        name: Weather-Linux.zip
+        path: dist
+  
+  build-windows:
+    runs-on: windows-latest
+    env:
+      PYI_BUILD_MODE: "onefile"
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install Python dependencies and build
+      run: |
+        python3 --version
+        pip install --upgrade pip wheel
+        pip install -r requirements.txt
+        pip install pyinstaller
+        pyinstaller windows-weather.spec
+      
+    - name: Log files
+      run: |
+        ls dist
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with: 
+        name: Weather-Win.zip
+        path: dist
