@@ -1,9 +1,6 @@
 name: Build and package python Weather
 
-on:
-  push:
-    branches: [master]
-  workflow_dispatch:
+on: push
 
 jobs:
   build-mac:
@@ -46,12 +43,14 @@ jobs:
         mv ./dist/Weather.app ./Weather/Weather.app
         ln -s /Applications ./Weather/Applications
         hdiutil create -srcfolder ./Weather Weather.dmg
-    
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
-      with: 
-        name: Weather-Mac.zip
-        path: Weather
+
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: Weather.dmg
+        asset_name: Weather.dmg
+        tag: debug-builds
+        overwrite: true
         
   build-linux:
     runs-on: ubuntu-latest
@@ -74,11 +73,13 @@ jobs:
       run: |
         ls dist
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
-      with: 
-        name: Weather-Linux.zip
-        path: dist
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: dist/Weather
+        asset_name: Weather
+        tag: debug-builds
+        overwrite: true
   
   build-windows:
     runs-on: windows-latest
@@ -100,8 +101,10 @@ jobs:
       run: |
         ls dist
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
-      with: 
-        name: Weather-Win.zip
-        path: dist
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: dist/Weather.exe
+        asset_name: Weather.exe
+        tag: debug-builds
+        overwrite: true

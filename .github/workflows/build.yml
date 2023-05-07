@@ -1,6 +1,8 @@
 name: Build and package python Weather
 
-on: push
+on:
+  push:
+    branches: [ main ]
 
 jobs:
   build-mac:
@@ -49,7 +51,7 @@ jobs:
       with:
         file: Weather.dmg
         asset_name: Weather.dmg
-        tag: latest-builds
+        tag: official-builds
         overwrite: true
         
   build-linux:
@@ -78,7 +80,7 @@ jobs:
       with:
         file: dist/Weather
         asset_name: Weather
-        tag: latest-builds
+        tag: official-builds
         overwrite: true
   
   build-windows:
@@ -106,5 +108,5 @@ jobs:
       with:
         file: dist/Weather.exe
         asset_name: Weather.exe
-        tag: latest-builds
+        tag: official-builds
         overwrite: true
