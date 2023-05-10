@@ -43,15 +43,15 @@ jobs:
         mv ./dist/Weather.app ./Weather/Weather.app
         ln -s /Applications ./Weather/Applications
         hdiutil create -srcfolder ./Weather Weather.dmg
-
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
-      with:
-        file: Weather.dmg
-        asset_name: Weather.dmg
-        tag: debug-builds
-        overwrite: true
         
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        # Artifact name
+        name: Weather-Mac.dmg
+        path: Weather.dmg
+
+    
   build-linux:
     runs-on: ubuntu-latest
     env:
@@ -73,13 +73,12 @@ jobs:
       run: |
         ls dist
 
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.2
       with:
-        file: dist/Weather
-        asset_name: Weather
-        tag: debug-builds
-        overwrite: true
+        # Artifact name
+        name: Weather-Linux.zip
+        path: dist/Weather
   
   build-windows:
     runs-on: windows-latest
@@ -100,11 +99,10 @@ jobs:
     - name: Log files
       run: |
         ls dist
-
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
+        
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.2
       with:
-        file: dist/Weather.exe
-        asset_name: Weather.exe
-        tag: debug-builds
-        overwrite: true
+        # Artifact name
+        name: Weather-Win.zip
+        path: dist/Weather.exe
