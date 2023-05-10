@@ -1,14 +1,18 @@
-name: Build and package python Weather
+name: Build and package Weather - Release
 
 on:
-  push:
-    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version"
+        required: true
+        default: "X.X"
 
 jobs:
   build-mac:
     runs-on: macos-latest
     env:
-      PYTHONVERSION: "3.11.1"
+      PYTHON_VERSION: "3.11.1"
       MACOSX_DEPLOYMENT_TARGET: "10.9"
       PYI_BUILD_MODE: "onedir"
 
@@ -51,7 +55,7 @@ jobs:
       with:
         file: Weather.dmg
         asset_name: Weather.dmg
-        tag: official-builds
+        tag: ${{ github.event.inputs.version }}
         overwrite: true
         
   build-linux:
@@ -80,7 +84,7 @@ jobs:
       with:
         file: dist/Weather
         asset_name: Weather
-        tag: official-builds
+        tag: ${{ github.event.inputs.version }}
         overwrite: true
   
   build-windows:
@@ -108,5 +112,5 @@ jobs:
       with:
         file: dist/Weather.exe
         asset_name: Weather.exe
-        tag: official-builds
+        tag: ${{ github.event.inputs.version }}
         overwrite: true
