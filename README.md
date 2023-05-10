@@ -4,7 +4,7 @@ A simple weather app that uses the OpenWeatherMap API to get the weather for a g
 
 ## Installation
 
-To run this app, you will need Python 3 installed on your computer. Clone this repository and navigate to the directory containing the `weather_app.py` file. 
+To run this app, you will need Python 3 installed on your computer. Clone this repository and navigate to the directory containing the `main.py` file. 
 
 Use the following command to install the required packages:
 ```bash
@@ -15,11 +15,11 @@ pip install -r requirements.txt
 Once the packages are installed, you can run the app using the following command:
 
 ```bash
-python3 weather_app.py
+python3 main.py
 ```
 or
 ```bash
-py3 weather_app.py
+py3 main.py
 ```
 
 
