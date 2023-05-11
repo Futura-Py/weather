@@ -1,12 +1,6 @@
-name: Build and package Weather - Release
+name: Build and package Weather - Debugs
 
-on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Version"
-        required: true
-        default: "X.X"
+on: push
 
 jobs:
   build-mac:
@@ -29,7 +23,6 @@ jobs:
     - name: Get Python
       run: |
        curl https://www.python.org/ftp/python/${PYTHONVERSION}/python-${PYTHONVERSION}-macos11.pkg -o ~/python.pkg
-
     - name: Install Python
       run: sudo installer -pkg ~/python.pkg -target /
 
@@ -49,17 +42,17 @@ jobs:
         mv ./dist/Weather.app ./Weather/Weather.app
         ln -s /Applications ./Weather/Applications
         hdiutil create -srcfolder ./Weather Weather.dmg
-
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
-      with:
-        file: Weather.dmg
-        asset_name: Weather.dmg
-        tag: ${{ github.event.inputs.version }}
-        overwrite: true
         
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        # Artifact name
+        name: Weather-Mac
+        path: Weather.dmg
+
+
   build-linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       PYI_BUILD_MODE: "onefile"
 
@@ -71,30 +64,27 @@ jobs:
         pip3 install pyinstaller
         pip3 install -r requirements.txt
         sudo apt install python3-tk python3-pil.imagetk
-
     - name: Build
       run: pyinstaller weather.spec
-      
+
     - name: Log files
       run: |
         ls dist
-
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.2
       with:
-        file: dist/Weather
-        asset_name: Weather
-        tag: ${{ github.event.inputs.version }}
-        overwrite: true
-  
+        # Artifact name
+        name: Weather-Linux
+        path: dist/Weather
+
   build-windows:
     runs-on: windows-latest
     env:
       PYI_BUILD_MODE: "onefile"
-    
+
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Install Python dependencies and build
       run: |
         python3 --version
@@ -106,11 +96,10 @@ jobs:
     - name: Log files
       run: |
         ls dist
-
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
+        
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.2
       with:
-        file: dist/Weather.exe
-        asset_name: Weather.exe
-        tag: ${{ github.event.inputs.version }}
-        overwrite: true
+        # Artifact name
+        name: Weather-Windows
+        path: dist/Weather.exe
