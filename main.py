@@ -44,15 +44,28 @@ class App(Tk):
         self.label_status = Label(
             self.main_frame, text="", font=("Helvetica 13"))
         self.label_status.grid(row=2, column=0, columnspan=2)
+
         self.label_temp = Label(
             self.main_frame, text="", font=("Helvetica 13"))
         self.label_temp.grid(row=3, column=0, columnspan=2)
 
+        self.label_temp_max = Label(
+            self.main_frame, text="", font=("Helvetica 13"))
+        self.label_temp_max.grid(row=4, column=0, columnspan=2)
+
+        self.label_temp_min = Label(
+            self.main_frame, text="", font=("Helvetica 13"))
+        self.label_temp_min.grid(row=5, column=0, columnspan=2)
+
+        self.label_feels_like = Label(
+            self.main_frame, text="", font=("Helvetica 13"))
+        self.label_feels_like.grid(row=6, column=0, columnspan=2)
+
         Button(self.main_frame, text="Search for City", command=self.OWMCITY).grid(
-            row=4, column=0, padx=10, pady=10
+            row=7, column=0, padx=10, pady=10
         )
         Button(self.main_frame, text="Exit", command=self.exit_app).grid(
-            row=4, column=1, padx=10, pady=10
+            row=7, column=1, padx=10, pady=10
         )
 
         self.resize_app()
@@ -106,7 +119,7 @@ class App(Tk):
             f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}"
         )
         if response.status_code != 200:
-            self.label.configure(text="City not found")
+            self.label_status.configure(text="City not found")
             return
         # Get response data, simplify and create variables for usage
         data = response.json()
@@ -116,17 +129,26 @@ class App(Tk):
         # temperature_kelvin: float = main["temp"]
         # temperature_celsius = temperature_kelvin - 273.15
         temp = temperature.get("temp", None)
-        temperature.get("temp_max", None)
-        temperature.get("temp_min", None)
-        temperature.get("feels_like", None)
+        temp_max = temperature.get("temp_max", None)
+        temp_min = temperature.get("temp_min", None)
+        feels_like = temperature.get("feels_like", None)
         status: str = weather.status
+        detailed_status: str = weather.detailed_status
         # Other data needed from the API
         main["humidity"]
         main["pressure"]
         # Put in label
-        self.label_status.configure(text="Weather: " + status)
+        self.label_status.configure(
+            text="Weather: " + status + ":- " + detailed_status)
         self.label_temp.configure(text="Temperature: " + f"{temp:.2f}°C")
-
+        self.label_temp_max.configure(
+            text="Maximum Temperature: " + f"{temp_max:.2f}°C"
+        )
+        self.label_temp_min.configure(
+            text="Minimum Temperature: " + f"{temp_min:.2f}°C"
+        )
+        self.label_feels_like.configure(
+            text="Feels like " + f"{feels_like:.2f}°C")
         return self
 
 
