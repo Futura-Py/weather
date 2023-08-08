@@ -38,48 +38,51 @@ class App(Tk):
         heading = Label(self.main_frame, text="Weather", font="Helvetica 13")
         heading.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
 
+        self.cityname = Label(self.main_frame, text="", font=("Helvetica 13"))
+        self.cityname.grid(row=1, column=0, columnspan=2)
+
         self.searchbar = Entry(self.main_frame, width=42)
-        self.searchbar.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
+        self.searchbar.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
 
         self.label_status = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_status.grid(row=2, column=0, columnspan=2)
+        self.label_status.grid(row=3, column=0, columnspan=2)
 
         self.label_temp = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_temp.grid(row=3, column=0, columnspan=2)
+        self.label_temp.grid(row=4, column=0, columnspan=2)
 
         self.label_temp_max = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_temp_max.grid(row=4, column=0, columnspan=2)
+        self.label_temp_max.grid(row=5, column=0, columnspan=2)
 
         self.label_temp_min = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_temp_min.grid(row=5, column=0, columnspan=2)
+        self.label_temp_min.grid(row=6, column=0, columnspan=2)
 
         self.label_feels_like = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_feels_like.grid(row=6, column=0, columnspan=2)
+        self.label_feels_like.grid(row=7, column=0, columnspan=2)
 
         self.label_humidity = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_humidity.grid(row=7, column=0, columnspan=2)
+        self.label_humidity.grid(row=8, column=0, columnspan=2)
 
         self.label_pressure = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_pressure.grid(row=8, column=0, columnspan=2)
+        self.label_pressure.grid(row=9, column=0, columnspan=2)
 
         self.label_visibility = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_visibility.grid(row=9, column=0, columnspan=2)
+        self.label_visibility.grid(row=10, column=0, columnspan=2)
 
         self.label_windspeed = Label(self.main_frame, text="", font=("Helvetica 13"))
-        self.label_windspeed.grid(row=10, column=0, columnspan=2)
+        self.label_windspeed.grid(row=11, column=0, columnspan=2)
         Button(self.main_frame, text="Search for City", command=self.OWMCITY).grid(
-            row=11, column=0, padx=10, pady=10
+            row=12, column=0, padx=10, pady=10
         )
         Button(self.main_frame, text="Exit", command=self.exit_app).grid(
-            row=11, column=1, padx=10, pady=10
+            row=12, column=1, padx=10, pady=10
         )
 
         self.resize_app()
@@ -155,6 +158,7 @@ class App(Tk):
         visibility = weather.visibility(unit='kilometers')
         windspeed: float = wind["speed"]
         # Put in label
+        self.cityname.configure(text=data["name"] + ", " + data["sys"]["country"])
         self.label_status.configure(
             text="Weather: " + status + ":- " + detailed_status)
         self.label_temp.configure(text="Temperature: " + f"{temp:.2f}°C")
