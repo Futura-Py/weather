@@ -61,11 +61,23 @@ class App(Tk):
             self.main_frame, text="", font=("Helvetica 13"))
         self.label_feels_like.grid(row=6, column=0, columnspan=2)
 
+        self.label_humidity = Label(
+            self.main_frame, text="", font=("Helvetica 13"))
+        self.label_humidity.grid(row=7, column=0, columnspan=2)
+
+        self.label_pressure = Label(
+            self.main_frame, text="", font=("Helvetica 13"))
+        self.label_pressure.grid(row=8, column=0, columnspan=2)
+
+        self.label_visibility = Label(
+            self.main_frame, text="", font=("Helvetica 13"))
+        self.label_visibility.grid(row=9, column=0, columnspan=2)
+
         Button(self.main_frame, text="Search for City", command=self.OWMCITY).grid(
-            row=7, column=0, padx=10, pady=10
+            row=10, column=0, padx=10, pady=10
         )
         Button(self.main_frame, text="Exit", command=self.exit_app).grid(
-            row=7, column=1, padx=10, pady=10
+            row=10, column=1, padx=10, pady=10
         )
 
         self.resize_app()
@@ -135,8 +147,9 @@ class App(Tk):
         status: str = weather.status
         detailed_status: str = weather.detailed_status
         # Other data needed from the API
-        main["humidity"]
-        main["pressure"]
+        humidity = main["humidity"]
+        pressure = main["pressure"]
+        visibility = weather.visibility(unit='kilometers')
         # Put in label
         self.label_status.configure(
             text="Weather: " + status + ":- " + detailed_status)
@@ -149,6 +162,12 @@ class App(Tk):
         )
         self.label_feels_like.configure(
             text="Feels like " + f"{feels_like:.2f}°C")
+        self.label_humidity.configure(text="Humidity: " + f"{humidity:.2f}%")
+        self.label_pressure.configure(
+            text="Pressure: " + f"{pressure:.2f}" + " hPa"
+        )
+        self.label_visibility.configure(
+            text="Visibility: " + f"{visibility:.2f}" + " km")
         return self
 
 
