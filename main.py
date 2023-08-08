@@ -73,11 +73,13 @@ class App(Tk):
             self.main_frame, text="", font=("Helvetica 13"))
         self.label_visibility.grid(row=9, column=0, columnspan=2)
 
+        self.label_windspeed = Label(self.main_frame, text="", font=("Helvetica 13"))
+        self.label_windspeed.grid(row=10, column=0, columnspan=2)
         Button(self.main_frame, text="Search for City", command=self.OWMCITY).grid(
-            row=10, column=0, padx=10, pady=10
+            row=11, column=0, padx=10, pady=10
         )
         Button(self.main_frame, text="Exit", command=self.exit_app).grid(
-            row=10, column=1, padx=10, pady=10
+            row=11, column=1, padx=10, pady=10
         )
 
         self.resize_app()
@@ -137,6 +139,7 @@ class App(Tk):
         data = response.json()
         main = data["main"]
         temperature = weather.temperature("celsius")
+        wind = weather.wind(unit='meters_sec')
         # Get temperature in Celsius
         # temperature_kelvin: float = main["temp"]
         # temperature_celsius = temperature_kelvin - 273.15
@@ -150,6 +153,7 @@ class App(Tk):
         humidity = main["humidity"]
         pressure = main["pressure"]
         visibility = weather.visibility(unit='kilometers')
+        windspeed: float = wind["speed"]
         # Put in label
         self.label_status.configure(
             text="Weather: " + status + ":- " + detailed_status)
@@ -168,6 +172,7 @@ class App(Tk):
         )
         self.label_visibility.configure(
             text="Visibility: " + f"{visibility:.2f}" + " km")
+        self.label_windspeed.configure(text="Wind Speed: " + f"{windspeed:.2f}" + " meters per second")
         return self
 
 
