@@ -30,4 +30,4 @@ format:
     just black
     just autopep8
     just isort
-    ruff . --fix
+    just ruff
