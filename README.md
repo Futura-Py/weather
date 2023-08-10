@@ -57,13 +57,17 @@ A method that sends a request to the OpenWeatherMap API to get the weather for a
 
 ## Contributing
 
-Contributions are welcome! If you find a bug or have an idea for a new feature, please open an issue or submit a pull request. 
+Contributions are welcome! If you find a bug or have an idea for a new feature, please open an [issue](https://github.com/Futura-Py/weather/issues/new) or submit a [pull request](https://github.com/Futura-Py/weather/compare). 
 ## Pre-Commit Actions
 
 Before making any commits, run the following command:
 
 ```bash
 black .; isort .; ruff . --fix
+```
+Or, if you have the [`just` command runner](https://just.systems/) installed:
+```bash
+just format
 ```
 
 This will automatically format the code to follow the PEP 8 style guide and run several linters to catch any errors or warnings
