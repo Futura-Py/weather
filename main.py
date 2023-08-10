@@ -76,7 +76,8 @@ class App(Tk):
             self.main_frame, text="", font=("Helvetica 13"))
         self.label_visibility.grid(row=10, column=0, columnspan=2)
 
-        self.label_windspeed = Label(self.main_frame, text="", font=("Helvetica 13"))
+        self.label_windspeed = Label(
+            self.main_frame, text="", font=("Helvetica 13"))
         self.label_windspeed.grid(row=11, column=0, columnspan=2)
         Button(self.main_frame, text="Search for City", command=self.OWMCITY).grid(
             row=12, column=0, padx=10, pady=10
@@ -142,7 +143,7 @@ class App(Tk):
         data = response.json()
         main = data["main"]
         temperature = weather.temperature("celsius")
-        wind = weather.wind(unit='meters_sec')
+        wind = weather.wind(unit="meters_sec")
         # Get temperature in Celsius
         # temperature_kelvin: float = main["temp"]
         # temperature_celsius = temperature_kelvin - 273.15
@@ -155,10 +156,11 @@ class App(Tk):
         # Other data needed from the API
         humidity = main["humidity"]
         pressure = main["pressure"]
-        visibility = weather.visibility(unit='kilometers')
+        visibility = weather.visibility(unit="kilometers")
         windspeed: float = wind["speed"]
         # Put in label
-        self.cityname.configure(text=data["name"] + ", " + data["sys"]["country"])
+        self.cityname.configure(
+            text=data["name"] + ", " + data["sys"]["country"])
         self.label_status.configure(
             text="Weather: " + status + ":- " + detailed_status)
         self.label_temp.configure(text="Temperature: " + f"{temp:.2f}°C")
@@ -172,11 +174,13 @@ class App(Tk):
             text="Feels like " + f"{feels_like:.2f}°C")
         self.label_humidity.configure(text="Humidity: " + f"{humidity:.2f}%")
         self.label_pressure.configure(
-            text="Pressure: " + f"{pressure:.2f}" + " hPa"
-        )
+            text="Pressure: " + f"{pressure:.2f}" + " hPa")
         self.label_visibility.configure(
-            text="Visibility: " + f"{visibility:.2f}" + " km")
-        self.label_windspeed.configure(text="Wind Speed: " + f"{windspeed:.2f}" + " meters per second")
+            text="Visibility: " + f"{visibility:.2f}" + " km"
+        )
+        self.label_windspeed.configure(
+            text="Wind Speed: " + f"{windspeed:.2f}" + " meters per second"
+        )
         return self
 
 
