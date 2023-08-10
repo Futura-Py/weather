@@ -1,4 +1,4 @@
-<h1 align="center">Future Weather</h1>
+<h1 align="center">Futura Weather</h1>
 
 A simple weather app that uses the OpenWeatherMap API to get the weather for a given city. 
 
@@ -27,7 +27,7 @@ py3 main.py
 
 When you run the app, a window will open with a search bar, a label to display the weather information, and two buttons. 
 
-To search for the weather in a city, simply enter the name of the city in the search bar and click the "Search for City" button. The app will display the temperature in Celsius for that city in the label. 
+To search for the weather in a city, simply enter the name of the city in the search bar and click the "Search for City" button. The app will display the status of weather, followed by maximum, minimum and current temperature with how the temperature feels, and following that presents the humidity, pressure, visibility and wind speed in respective labels. The name of the city will be added above the search bar, in its rerspective label.
 
 To exit the app, click the "Exit" button. 
 
@@ -57,13 +57,17 @@ A method that sends a request to the OpenWeatherMap API to get the weather for a
 
 ## Contributing
 
-Contributions are welcome! If you find a bug or have an idea for a new feature, please open an issue or submit a pull request. 
+Contributions are welcome! If you find a bug or have an idea for a new feature, please open an [issue](https://github.com/Futura-Py/weather/issues/new) or submit a [pull request](https://github.com/Futura-Py/weather/compare). 
 ## Pre-Commit Actions
 
 Before making any commits, run the following command:
 
 ```bash
 black .; isort .; ruff . --fix
+```
+Or, if you have the [`just` command runner](https://just.systems/) installed:
+```bash
+just format
 ```
 
 This will automatically format the code to follow the PEP 8 style guide and run several linters to catch any errors or warnings
