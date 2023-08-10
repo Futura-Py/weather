@@ -27,7 +27,7 @@ py3 main.py
 
 When you run the app, a window will open with a search bar, a label to display the weather information, and two buttons. 
 
-To search for the weather in a city, simply enter the name of the city in the search bar and click the "Search for City" button. The app will display the temperature in Celsius for that city in the label. 
+To search for the weather in a city, simply enter the name of the city in the search bar and click the "Search for City" button. The app will display the status of weather, followed by maximum, minimum and current temperature with how the temperature feels, and following that presents the humidity, pressure, visibility and wind speed in respective labels. The name of the city will be added above the search bar, in its rerspective label.
 
 To exit the app, click the "Exit" button. 
 
