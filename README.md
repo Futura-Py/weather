@@ -1,4 +1,4 @@
-<h1 align="center">Future Weather</h1>
+<h1 align="center">Futura Weather</h1>
 
 A simple weather app that uses the OpenWeatherMap API to get the weather for a given city. 
 
