@@ -26,7 +26,11 @@ class ProgressBar(Toplevel):
         main_label.grid(padx=10, pady=10)
 
         self.progressbar = Progressbar(
-            self.main_frame, orient="horizontal", length=200, mode="indeterminate", maximum=4
+            self.main_frame,
+            orient="horizontal",
+            length=200,
+            mode="indeterminate",
+            maximum=4,
         )
         self.progressbar.grid(padx=10, pady=10)
 
@@ -58,7 +62,6 @@ class ProgressBar(Toplevel):
 
 class App(Tk):
     def __init__(self):
-
         super().__init__()
         self.withdraw()
 
@@ -129,10 +132,10 @@ class App(Tk):
         self.label_windspeed.grid(row=8, column=0, columnspan=2)
 
         # Set up buttons
-        self.start_button = Button(self.main_frame, text="Search for City", command=self.OWMCITY)
-        self.start_button.grid(
-            row=12, column=0, padx=10, pady=10
+        self.start_button = Button(
+            self.main_frame, text="Search for City", command=self.OWMCITY
         )
+        self.start_button.grid(row=12, column=0, padx=10, pady=10)
         Button(self.main_frame, text="Exit", command=self.exit_app).grid(
             row=12, column=1, padx=10, pady=10
         )
@@ -208,9 +211,9 @@ class App(Tk):
             self.searchbar.configure(state="normal")
             pb.destroy()
             self.searching = False
-            self.resize_app() # In case the name gets too long or it renders differently on other systems
+            self.resize_app()  # In case the name gets too long or it renders differently on other systems
             return
-        
+
         pb.progressbar.step()
 
         # Check if city exists
@@ -223,9 +226,9 @@ class App(Tk):
             self.searchbar.configure(state="normal")
             pb.destroy()
             self.searching = False
-            self.resize_app() # In case the name gets too long or it renders differently on other systems
+            self.resize_app()  # In case the name gets too long or it renders differently on other systems
             return
-        
+
         pb.progressbar.step()
 
         # Get weather data
@@ -244,7 +247,7 @@ class App(Tk):
             self.searchbar.configure(state="normal")
             pb.destroy()
             self.searching = False
-            self.resize_app() # In case the name gets too long or it renders differently on other systems
+            self.resize_app()  # In case the name gets too long or it renders differently on other systems
             return
 
         pb.progressbar.step()
@@ -258,17 +261,19 @@ class App(Tk):
         temperature = weather.temperature("celsius")
 
         # Update labels
-        self.update_labels([
-            f"Weather: {weather.status} ~ {weather.detailed_status}",
-            f"Current Temperature: {temperature.get('temp', None):.2f}°C",
-            f"Maximum Temperature: {temperature.get('temp_max', None):.2f}°C",
-            f"Minimum Temperature: {temperature.get('temp_min', None):.2f}°C",
-            f"Feels like {temperature.get('feels_like', None):.2f}°C",
-            f"Humidity: {main['humidity']:.2f}%",
-            f"Pressure: {main['pressure']:.2f} hPa",
-            f"Visibility: {weather.visibility(unit='kilometers'):.2f} km",
-            f"Wind Speed: { weather.wind(unit='meters_sec')['speed']:.2f} meters per second",
-        ])
+        self.update_labels(
+            [
+                f"Weather: {weather.status} ~ {weather.detailed_status}",
+                f"Current Temperature: {temperature.get('temp', None):.2f}°C",
+                f"Maximum Temperature: {temperature.get('temp_max', None):.2f}°C",
+                f"Minimum Temperature: {temperature.get('temp_min', None):.2f}°C",
+                f"Feels like {temperature.get('feels_like', None):.2f}°C",
+                f"Humidity: {main['humidity']:.2f}%",
+                f"Pressure: {main['pressure']:.2f} hPa",
+                f"Visibility: {weather.visibility(unit='kilometers'):.2f} km",
+                f"Wind Speed: { weather.wind(unit='meters_sec')['speed']:.2f} meters per second",
+            ]
+        )
 
         # Set the city name
         self.cityname.configure(text=f"City: {city}")
@@ -282,7 +287,7 @@ class App(Tk):
         self.searchbar.configure(state="normal")
         pb.destroy()
         self.searching = False
-        self.resize_app() # In case the name gets too long or it renders differently on other systems
+        self.resize_app()  # In case the name gets too long or it renders differently on other systems
 
     def update_labels(self, data: list[str] = ["" for _ in range(9)]) -> None:
         """Clear all weather labels."""
