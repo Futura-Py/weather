@@ -15,29 +15,57 @@ class ProgressBar(Toplevel):
     def __init__(self, parent: App, *args, **kwargs):
         # Set up window
         super().__init__(parent, *args, **kwargs)
-        self.withdraw()
         self.title("Loading...")
         self.resizable(False, False)
 
         # Set up widgets
         self.main_frame = Frame(self)
-        self.main_frame.pack()
+        self.main_frame.grid()
+
+        main_label = Label(self.main_frame, text="Loading...", font="Helvetica 15 bold")
+        main_label.grid(padx=10, pady=10)
 
         self.progressbar = Progressbar(
-            self.main_frame, orient="horizontal", length=200, mode="indeterminate"
+            self.main_frame, orient="horizontal", length=200, mode="indeterminate", maximum=4
         )
-        self.progressbar.pack(padx=10, pady=10)
+        self.progressbar.grid(padx=10, pady=10)
 
-        self.deiconify()
+        self.resize_app()
+
+    def resize_app(self) -> App:
+        """Use tkinter to detect the minimum size of the app, get the center of the screen, and place the app there."""
+
+        # TODO: Make a global function for this to remove boilerplate code
+        # Update widgets so minimum size is accurate
+        self.update_idletasks()
+
+        # Get minimum size
+        minimum_width: int = self.winfo_reqwidth()
+        minimum_height: int = self.winfo_reqheight()
+
+        # Get center of screen based on minimum size
+        x_coords = int(self.winfo_screenwidth() / 2 - minimum_width / 2)
+        y_coords = int(self.wm_maxsize()[1] / 2 - minimum_height / 2)
+
+        # Place app and make the minimum size the actual minimum size (non-infringable)
+        self.geometry(f"{minimum_width}x{minimum_height}+{x_coords}+{y_coords}")
+        self.wm_minsize(minimum_width, minimum_height)
+        return self
+
+    def set_progress(self, progress: int):
+        self.progressbar.step(progress)
 
 
 class App(Tk):
     def __init__(self):
+
         super().__init__()
         self.withdraw()
+
         # Set up Menubar
         if system() == "Darwin":
             self.menubar = Menu(self)
+
             # Apple menus have special names and special commands
             self.app_menu = Menu(self.menubar, tearoff=0, name="apple")
             self.menubar.add_cascade(label="App", menu=self.app_menu)
@@ -101,12 +129,16 @@ class App(Tk):
         self.label_windspeed.grid(row=8, column=0, columnspan=2)
 
         # Set up buttons
-        Button(self.main_frame, text="Search for City", command=self.OWMCITY).grid(
+        self.start_button = Button(self.main_frame, text="Search for City", command=self.OWMCITY)
+        self.start_button.grid(
             row=12, column=0, padx=10, pady=10
         )
         Button(self.main_frame, text="Exit", command=self.exit_app).grid(
             row=12, column=1, padx=10, pady=10
         )
+
+        # Set variables
+        self.searching: bool = False
 
         # Resize and deiconify
         self.resize_app()
@@ -114,6 +146,7 @@ class App(Tk):
 
     def about(self) -> App:
         """Display a messagebox with information about the app."""
+
         messagebox.showinfo(
             "About Weather",
             "Weather is a simple weather app that uses the OpenWeatherMap API to get the weather for a given city.",
@@ -121,8 +154,9 @@ class App(Tk):
         )
         return self
 
-    def resize_app(self, keep_placement: bool = False) -> App:
+    def resize_app(self) -> App:
         """Use tkinter to detect the minimum size of the app, get the center of the screen, and place the app there."""
+
         # Update widgets so minimum size is accurate
         self.update_idletasks()
 
@@ -135,10 +169,7 @@ class App(Tk):
         y_coords = int(self.wm_maxsize()[1] / 2 - minimum_height / 2)
 
         # Place app and make the minimum size the actual minimum size (non-infringable)
-        if keep_placement:
-            self.geometry(f"{minimum_width}x{minimum_height}")
-        else:
-            self.geometry(f"{minimum_width}x{minimum_height}+{x_coords}+{y_coords}")
+        self.geometry(f"{minimum_width}x{minimum_height}+{x_coords}+{y_coords}")
         self.wm_minsize(minimum_width, minimum_height)
         return self
 
@@ -146,8 +177,19 @@ class App(Tk):
         """Exit the app."""
         self.destroy()
 
-    def OWMCITY(self, _=Event | None) -> None:
+    def OWMCITY(self, _: Event | None = None) -> None:
         """Get the weather for a given city using the OpenWeatherMap API and display it in a label."""
+
+        # Check if already searching
+        if self.searching:
+            return
+        self.searching = True
+
+        # Start the Progress Bar, disable buttons and clear labels, and disable searchbar
+        self.start_button.configure(state="disabled")
+        self.searchbar.configure(state="disabled")
+        self.update_labels()
+        pb = ProgressBar(self)
 
         # Get API key
         api_key: str = "c439e1209216cc7e7c73a3a8d1d12bfd"
@@ -155,11 +197,21 @@ class App(Tk):
         mgr = owm.weather_manager()
         # Get city name
         city: str = self.searchbar.get()
+        self.searchbar.delete(0, "end")
 
         # Check if city is empty
         if not city:
+            # TODO: Make a method to reduce code duplication (boilerplate)
             self.cityname.configure(text="City: Needs Name")
+            self.update_labels()
+            self.start_button.configure(state="normal")
+            self.searchbar.configure(state="normal")
+            pb.destroy()
+            self.searching = False
+            self.resize_app() # In case the name gets too long or it renders differently on other systems
             return
+        
+        pb.progressbar.step()
 
         # Check if city exists
         try:
@@ -167,7 +219,14 @@ class App(Tk):
         except OWMNotFoundError or APIRequestError:
             self.cityname.configure(text="City: Not Found")
             self.update_labels()
+            self.start_button.configure(state="normal")
+            self.searchbar.configure(state="normal")
+            pb.destroy()
+            self.searching = False
+            self.resize_app() # In case the name gets too long or it renders differently on other systems
             return
+        
+        pb.progressbar.step()
 
         # Get weather data
         weather = observation.weather
@@ -181,7 +240,14 @@ class App(Tk):
         if response.status_code != 200:
             self.cityname.configure(text="City: Connection Error")
             self.update_labels()
+            self.start_button.configure(state="normal")
+            self.searchbar.configure(state="normal")
+            pb.destroy()
+            self.searching = False
+            self.resize_app() # In case the name gets too long or it renders differently on other systems
             return
+
+        pb.progressbar.step()
 
         # Get response data, simplify and create variables for usage
         # TODO: Give all data in dual columns
@@ -192,7 +258,7 @@ class App(Tk):
         temperature = weather.temperature("celsius")
 
         # Update labels
-        self.update_labels(
+        self.update_labels([
             f"Weather: {weather.status} ~ {weather.detailed_status}",
             f"Current Temperature: {temperature.get('temp', None):.2f}°C",
             f"Maximum Temperature: {temperature.get('temp_max', None):.2f}°C",
@@ -202,7 +268,21 @@ class App(Tk):
             f"Pressure: {main['pressure']:.2f} hPa",
             f"Visibility: {weather.visibility(unit='kilometers'):.2f} km",
             f"Wind Speed: { weather.wind(unit='meters_sec')['speed']:.2f} meters per second",
-        )
+        ])
+
+        # Set the city name
+        self.cityname.configure(text=f"City: {city}")
+
+        # Update the Progress Bar one last time
+        print("Updating Progress Bar one last time")
+        pb.progressbar.step()
+
+        # Stop the Progress Bar, enable buttons and searchbar, and set searching to False
+        self.start_button.configure(state="normal")
+        self.searchbar.configure(state="normal")
+        pb.destroy()
+        self.searching = False
+        self.resize_app() # In case the name gets too long or it renders differently on other systems
 
     def update_labels(self, data: list[str] = ["" for _ in range(9)]) -> None:
         """Clear all weather labels."""
