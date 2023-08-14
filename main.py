@@ -50,35 +50,35 @@ class App(Tk):
 
         self.label_temp = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_temp.grid(row=4, column=0, columnspan=2)
+        self.label_temp.grid(row=3, column=0, columnspan=2)
 
         self.label_temp_max = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_temp_max.grid(row=5, column=0, columnspan=2)
+        self.label_temp_max.grid(row=3, column=0, columnspan=2)
 
         self.label_temp_min = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_temp_min.grid(row=6, column=0, columnspan=2)
+        self.label_temp_min.grid(row=3, column=0, columnspan=2)
 
         self.label_feels_like = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_feels_like.grid(row=7, column=0, columnspan=2)
+        self.label_feels_like.grid(row=3, column=0, columnspan=2)
 
         self.label_humidity = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_humidity.grid(row=8, column=0, columnspan=2)
+        self.label_humidity.grid(row=3, column=0, columnspan=2)
 
         self.label_pressure = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_pressure.grid(row=9, column=0, columnspan=2)
+        self.label_pressure.grid(row=3, column=0, columnspan=2)
 
         self.label_visibility = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_visibility.grid(row=10, column=0, columnspan=2)
+        self.label_visibility.grid(row=3, column=0, columnspan=2)
 
         self.label_windspeed = Label(
             self.main_frame, text="", font=("Helvetica 13"))
-        self.label_windspeed.grid(row=11, column=0, columnspan=2)
+        self.label_windspeed.grid(row=3, column=0, columnspan=2)
         Button(self.main_frame, text="Search for City", command=self.OWMCITY).grid(
             row=12, column=0, padx=10, pady=10
         )
@@ -164,23 +164,32 @@ class App(Tk):
         self.label_status.configure(
             text="Weather: " + status + ":- " + detailed_status)
         self.label_temp.configure(text="Temperature: " + f"{temp:.2f}°C")
+        self.label_temp.grid(row=4, column=0, columnspan=2)
         self.label_temp_max.configure(
             text="Maximum Temperature: " + f"{temp_max:.2f}°C"
         )
+        self.label_temp_max.grid(row=5, column=0, columnspan=2)
         self.label_temp_min.configure(
             text="Minimum Temperature: " + f"{temp_min:.2f}°C"
         )
+        self.label_temp_min.grid(row=6, column=0, columnspan=2)
         self.label_feels_like.configure(
             text="Feels like " + f"{feels_like:.2f}°C")
+        self.label_feels_like.grid(row=7, column=0, columnspan=2)
         self.label_humidity.configure(text="Humidity: " + f"{humidity:.2f}%")
+        self.label_humidity.grid(row=8, column=0, columnspan=2)
         self.label_pressure.configure(
             text="Pressure: " + f"{pressure:.2f}" + " hPa")
+        self.label_pressure.grid(row=9, column=0, columnspan=2)
         self.label_visibility.configure(
             text="Visibility: " + f"{visibility:.2f}" + " km"
         )
+        self.label_visibility.grid(row=10, column=0, columnspan=2)
         self.label_windspeed.configure(
             text="Wind Speed: " + f"{windspeed:.2f}" + " meters per second"
         )
+        self.label_windspeed.grid(row=11, column=0, columnspan=2)
+        self.resize_app()
         return self
 
 
