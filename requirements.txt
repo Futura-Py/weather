@@ -3,4 +3,3 @@ isort
 black
 ruff
 pyowm
-sv_ttk
