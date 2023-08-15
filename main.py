@@ -285,7 +285,7 @@ class App(Tk):
 
         # Set the city name
         self.cityname.configure(
-            text=f"City: {', '.join([city.capitalize() for city in city.split(', ')])}"
+            text=f"City: {data['name']}, {data['sys']['country']}"
         )
 
         # Reset app
