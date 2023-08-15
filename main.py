@@ -32,6 +32,10 @@ class App(Tk):
 
         # Set up style
         set_theme("light")
+        self.color_mode: str = "light" # TODO: Read from a file and save to a file
+
+        # Set units to metric
+        self.units: str = "metric" # TODO: Read from a file and save to a file
 
         # Set up window
         self.title("Weather")
@@ -225,18 +229,28 @@ class App(Tk):
                 f"Pressure: {main['pressure']:.2f} hPa",
                 f"Visibility: {weather.visibility(unit='kilometers'):.2f} km",
                 f"Wind Speed: { weather.wind(unit='meters_sec')['speed']:.2f} meters per second",
+            ] if self.units == "metric" else [
+                f"Weather: {weather.status} ~ {weather.detailed_status}",
+                f"Current Temperature: {(temperature.get('temp', None)*(9/5))+32:.2f}°F",
+                f"Maximum Temperature: {(temperature.get('temp_max', None)*(9/5))+32:.2f}°F",
+                f"Minimum Temperature: {(temperature.get('temp_min', None)*(9/5))+32:.2f}°F",
+                f"Feels like {(temperature.get('feels_like', None)*(9/5))+32:.2f}°F",
+                f"Humidity: {main['humidity']:.2f}%",
+                f"Pressure: {main['pressure']*.0145038:.2f} psi",
+                f"Visibility: {weather.visibility(unit='miles'):.2f} miles",
+                f"Wind Speed: { weather.wind(unit='miles_hour')['speed']:.2f} miles per hour",
             ]
         )
 
         # Set the city name
-        self.cityname.configure(text=f"City: {city.lower().capitalize()}")
+        self.cityname.configure(text=f"City: {', '.join([city.capitalize() for city in city.split(', ')])}")
 
         # Stop the Progress Bar, enable buttons and searchbar, and set searching to False
         self.start_button.configure(state="normal")
         self.searchbar.configure(state="normal")
         self.searching = False
         self.searchbar.delete(0, "end")
-        self.resize_app()  # In case the name gets too long or it renders differently on other systems
+        self.resize_app()  # In case the name gets too long
 
     def update_labels(self, data: list[str] = ["" for _ in range(9)]) -> None:
         """Clear all weather labels."""
@@ -255,8 +269,27 @@ class App(Tk):
     def update_settings(self, _: Event | None = None) -> None:
         """Updates the settings such as units and color mode"""
 
-
-
+        # Color Mode Settings
+        if self.color_mode == "light" and self.color_mode_combobox.get() == "Dark":
+            set_theme("dark")
+            self.color_mode = "dark"
+            return
+        
+        if self.color_mode == "dark" and self.color_mode_combobox.get() == "Light":
+            set_theme("light")
+            self.color_mode = "light"
+            return
+        
+        # Unit Settings
+        if self.units == "metric" and self.unit_combobox.get() == "Imperial":
+            self.units = "imperial"
+            # TODO: Update labels to imperial
+            return
+        
+        if self.units == "imperial" and self.unit_combobox.get() == "Metric":
+            self.units = "metric"
+            # TODO: Update labels to metric
+            return
 
 if __name__ == "__main__":
     app = App()
