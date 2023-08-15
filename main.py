@@ -2,14 +2,16 @@ from __future__ import annotations
 
 from platform import system
 from tkinter import Event, Menu, Tk, messagebox
-from tkinter.ttk import Button, Entry, Frame, Label, Combobox
-from sv_ttk import set_theme
+from tkinter.ttk import Button, Combobox, Entry, Frame, Label
 
 from pyowm import OWM
-from pyowm.commons.exceptions import APIRequestError, TimeoutError
+from pyowm.commons.exceptions import APIRequestError
 from pyowm.commons.exceptions import NotFoundError as OWMNotFoundError
+from pyowm.commons.exceptions import TimeoutError
 from requests import Response
 from requests import get as requests_get
+from sv_ttk import set_theme
+
 
 class App(Tk):
     def __init__(self):
@@ -32,10 +34,10 @@ class App(Tk):
 
         # Set up style
         set_theme("light")
-        self.color_mode: str = "light" # TODO: Read from a file and save to a file
+        self.color_mode: str = "light"  # TODO: Read from a file and save to a file
 
         # Set units to metric
-        self.units: str = "metric" # TODO: Read from a file and save to a file
+        self.units: str = "metric"  # TODO: Read from a file and save to a file
 
         # Set up window
         self.title("Weather")
@@ -48,21 +50,35 @@ class App(Tk):
 
         heading = Label(self.main_frame, text="Weather", font="Helvetica 25 bold")
         heading.grid(row=0, column=0, padx=10, pady=10)
-        
+
         settings_frame = Frame(self.main_frame)
         settings_frame.grid(row=0, column=1, padx=(0, 10), pady=(10, 0), sticky="w")
 
-        self.unit_combobox = Combobox(settings_frame, values=["Metric", "Imperial"], state="readonly", font=("Helvetica 13"), width=10)
+        self.unit_combobox = Combobox(
+            settings_frame,
+            values=["Metric", "Imperial"],
+            state="readonly",
+            font=("Helvetica 13"),
+            width=10,
+        )
         self.unit_combobox.grid(row=0, column=0, padx=(0, 10), sticky="e")
         self.unit_combobox.current(0)
         self.unit_combobox.bind("<<ComboboxSelected>>", self.update_settings)
 
-        self.color_mode_combobox = Combobox(settings_frame, values=["Light", "Dark"], state="readonly", font=("Helvetica 13"), width=10)
+        self.color_mode_combobox = Combobox(
+            settings_frame,
+            values=["Light", "Dark"],
+            state="readonly",
+            font=("Helvetica 13"),
+            width=10,
+        )
         self.color_mode_combobox.grid(row=0, column=1, sticky="e")
         self.color_mode_combobox.current(0)
         self.color_mode_combobox.bind("<<ComboboxSelected>>", self.update_settings)
 
-        self.cityname = Label(self.main_frame, text="City: None", font=("Helvetica 15 bold"))
+        self.cityname = Label(
+            self.main_frame, text="City: None", font=("Helvetica 15 bold")
+        )
         self.cityname.grid(row=2, column=0, columnspan=2)
 
         self.searchbar = Entry(self.main_frame, width=42)
@@ -103,7 +119,9 @@ class App(Tk):
         buttons_frame = Frame(self.main_frame)
         buttons_frame.grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="n")
         self.start_button = Button(
-            buttons_frame, text="Search for City", command=self.OWMCITY,
+            buttons_frame,
+            text="Search for City",
+            command=self.OWMCITY,
         )
         self.start_button.grid(row=0, column=0, padx=10, pady=10, sticky="w")
         Button(buttons_frame, text="Exit", command=self.exit_app).grid(
@@ -229,7 +247,9 @@ class App(Tk):
                 f"Pressure: {main['pressure']:.2f} hPa",
                 f"Visibility: {weather.visibility(unit='kilometers'):.2f} km",
                 f"Wind Speed: { weather.wind(unit='meters_sec')['speed']:.2f} meters per second",
-            ] if self.units == "metric" else [
+            ]
+            if self.units == "metric"
+            else [
                 f"Weather: {weather.status} ~ {weather.detailed_status}",
                 f"Current Temperature: {(temperature.get('temp', None)*(9/5))+32:.2f}°F",
                 f"Maximum Temperature: {(temperature.get('temp_max', None)*(9/5))+32:.2f}°F",
@@ -243,7 +263,9 @@ class App(Tk):
         )
 
         # Set the city name
-        self.cityname.configure(text=f"City: {', '.join([city.capitalize() for city in city.split(', ')])}")
+        self.cityname.configure(
+            text=f"City: {', '.join([city.capitalize() for city in city.split(', ')])}"
+        )
 
         # Stop the Progress Bar, enable buttons and searchbar, and set searching to False
         self.start_button.configure(state="normal")
@@ -265,7 +287,7 @@ class App(Tk):
         self.label_visibility.configure(text=data[7])
         self.label_windspeed.configure(text=data[8])
         return None
-    
+
     def update_settings(self, _: Event | None = None) -> None:
         """Updates the settings such as units and color mode"""
 
@@ -274,12 +296,12 @@ class App(Tk):
             set_theme("dark")
             self.color_mode = "dark"
             return
-        
+
         if self.color_mode == "dark" and self.color_mode_combobox.get() == "Light":
             set_theme("light")
             self.color_mode = "light"
             return
-        
+
         # Unit Settings
         if self.units == "metric" and self.unit_combobox.get() == "Imperial":
             self.units = "imperial"
@@ -288,9 +310,9 @@ class App(Tk):
             self.update_labels(
                 [
                     self.label_weather.cget("text"),
-                    f"Current Temperature: {(float(self.label_temp.cget('text').split('°')[0].split(': ')[1]))*(9/5)+32:.2f}°F",
-                    f"Maximum Temperature: {(float(self.label_temp_max.cget('text').split('°')[0].split(': ')[1]))*(9/5)+32:.2f}°F",
-                    f"Minimum Temperature: {(float(self.label_temp_min.cget('text').split('°')[0].split(': ')[1])*(9/5))+32:.2f}°F",
+                    f"Current Temperature: {(float(self.label_temp.cget('text').split('°')[0].split(': ')[1]))*(9/5)+32:.2f}°F",  # noqa: E501
+                    f"Maximum Temperature: {(float(self.label_temp_max.cget('text').split('°')[0].split(': ')[1]))*(9/5)+32:.2f}°F",  # noqa: E501
+                    f"Minimum Temperature: {(float(self.label_temp_min.cget('text').split('°')[0].split(': ')[1])*(9/5))+32:.2f}°F",  # noqa: E501
                     f"Feels like {float(self.label_feels_like.cget('text').split('°')[0].split(' ')[2])*(9/5)+32:.2f}°F",
                     self.label_humidity.cget("text"),
                     f"Pressure: {float(self.label_pressure.cget('text').split(' ')[1])*.0145038:.2f} psi",
@@ -299,7 +321,7 @@ class App(Tk):
                 ]
             )
             return
-        
+
         if self.units == "imperial" and self.unit_combobox.get() == "Metric":
             self.units = "metric"
             if not self.label_weather.cget("text"):
@@ -307,9 +329,9 @@ class App(Tk):
             self.update_labels(
                 [
                     self.label_weather.cget("text"),
-                    f"Current Temperature: {(5/9)*((float(self.label_temp.cget('text').split('°')[0].split(': ')[1])-32)):.2f}°C",
-                    f"Maximum Temperature: {(5/9)*((float(self.label_temp_max.cget('text').split('°')[0].split(': ')[1])-32)):.2f}°C",
-                    f"Minimum Temperature: {(5/9)*((float(self.label_temp_min.cget('text').split('°')[0].split(': ')[1])-32)):.2f}°C",
+                    f"Current Temperature: {(5/9)*((float(self.label_temp.cget('text').split('°')[0].split(': ')[1])-32)):.2f}°C",  # noqa: E501
+                    f"Maximum Temperature: {(5/9)*((float(self.label_temp_max.cget('text').split('°')[0].split(': ')[1])-32)):.2f}°C",  # noqa: E501
+                    f"Minimum Temperature: {(5/9)*((float(self.label_temp_min.cget('text').split('°')[0].split(': ')[1])-32)):.2f}°C",  # noqa: E501
                     f"Feels like {(5/9)*((float(self.label_feels_like.cget('text').split('°')[0].split(' ')[2])-32)):.2f}°C",
                     self.label_humidity.cget("text"),
                     f"Pressure: {float(self.label_pressure.cget('text').split(' ')[1])*68.9476:.2f} hPa",
@@ -318,6 +340,7 @@ class App(Tk):
                 ]
             )
             return
+
 
 if __name__ == "__main__":
     app = App()
