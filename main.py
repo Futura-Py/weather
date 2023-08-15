@@ -6,7 +6,7 @@ from tkinter.ttk import Button, Entry, Frame, Label, Combobox
 from sv_ttk import set_theme
 
 from pyowm import OWM
-from pyowm.commons.exceptions import APIRequestError
+from pyowm.commons.exceptions import APIRequestError, TimeoutError
 from pyowm.commons.exceptions import NotFoundError as OWMNotFoundError
 from requests import Response
 from requests import get as requests_get
@@ -182,7 +182,7 @@ class App(Tk):
         # Check if city exists
         try:
             observation = mgr.weather_at_place(city)
-        except OWMNotFoundError or APIRequestError:
+        except OWMNotFoundError or APIRequestError or TimeoutError:
             self.cityname.configure(text="City: Not Found")
             self.update_labels()
             self.start_button.configure(state="normal")
@@ -283,12 +283,40 @@ class App(Tk):
         # Unit Settings
         if self.units == "metric" and self.unit_combobox.get() == "Imperial":
             self.units = "imperial"
-            # TODO: Update labels to imperial
+            if not self.label_weather.cget("text"):
+                return
+            self.update_labels(
+                [
+                    self.label_weather.cget("text"),
+                    f"Current Temperature: {(float(self.label_temp.cget('text').split('°')[0].split(': ')[1]))*(9/5)+32:.2f}°F",
+                    f"Maximum Temperature: {(float(self.label_temp_max.cget('text').split('°')[0].split(': ')[1]))*(9/5)+32:.2f}°F",
+                    f"Minimum Temperature: {(float(self.label_temp_min.cget('text').split('°')[0].split(': ')[1])*(9/5))+32:.2f}°F",
+                    f"Feels like {float(self.label_feels_like.cget('text').split('°')[0].split(' ')[2])*(9/5)+32:.2f}°F",
+                    self.label_humidity.cget("text"),
+                    f"Pressure: {float(self.label_pressure.cget('text').split(' ')[1])*.0145038:.2f} psi",
+                    f"Visibility: {float(self.label_visibility.cget('text').split(' ')[1])*0.621371:.2f} miles",
+                    f"Wind Speed: {float(self.label_windspeed.cget('text').split(' ')[2])*0.621371:.2f} miles per hour",
+                ]
+            )
             return
         
         if self.units == "imperial" and self.unit_combobox.get() == "Metric":
             self.units = "metric"
-            # TODO: Update labels to metric
+            if not self.label_weather.cget("text"):
+                return
+            self.update_labels(
+                [
+                    self.label_weather.cget("text"),
+                    f"Current Temperature: {(5/9)*((float(self.label_temp.cget('text').split('°')[0].split(': ')[1])-32)):.2f}°C",
+                    f"Maximum Temperature: {(5/9)*((float(self.label_temp_max.cget('text').split('°')[0].split(': ')[1])-32)):.2f}°C",
+                    f"Minimum Temperature: {(5/9)*((float(self.label_temp_min.cget('text').split('°')[0].split(': ')[1])-32)):.2f}°C",
+                    f"Feels like {(5/9)*((float(self.label_feels_like.cget('text').split('°')[0].split(' ')[2])-32)):.2f}°C",
+                    self.label_humidity.cget("text"),
+                    f"Pressure: {float(self.label_pressure.cget('text').split(' ')[1])*68.9476:.2f} hPa",
+                    f"Visibility: {float(self.label_visibility.cget('text').split(' ')[1])*1.60934:.2f} km",
+                    f"Wind Speed: {float(self.label_windspeed.cget('text').split(' ')[2])*1.60934:.2f} meters per second",
+                ]
+            )
             return
 
 if __name__ == "__main__":
