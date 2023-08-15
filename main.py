@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from platform import system
-from tkinter import Event, Menu, Tk, Toplevel, messagebox
-from tkinter.ttk import Button, Entry, Frame, Label, Progressbar, Style
+from tkinter import Event, Menu, Tk, messagebox
+from tkinter.ttk import Button, Entry, Frame, Label, Combobox
+from sv_ttk import set_theme
 
 from pyowm import OWM
 from pyowm.commons.exceptions import APIRequestError
@@ -30,7 +31,7 @@ class App(Tk):
         self.config(menu=self.menubar)
 
         # Set up style
-        Style().theme_use("clam")
+        set_theme("light")
 
         # Set up window
         self.title("Weather")
@@ -39,20 +40,33 @@ class App(Tk):
 
         # Set up widgets
         self.main_frame = Frame(self)
-        self.main_frame.pack()
+        self.main_frame.grid()
 
         heading = Label(self.main_frame, text="Weather", font="Helvetica 25 bold")
-        heading.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
+        heading.grid(row=0, column=0, padx=10, pady=10)
+        
+        settings_frame = Frame(self.main_frame)
+        settings_frame.grid(row=0, column=1, padx=(0, 10), pady=(10, 0), sticky="w")
 
-        self.cityname = Label(self.main_frame, text="City: None", font=("Helvetica 15"))
-        self.cityname.grid(row=1, column=0, columnspan=2)
+        self.unit_combobox = Combobox(settings_frame, values=["Metric", "Imperial"], state="readonly", font=("Helvetica 13"), width=10)
+        self.unit_combobox.grid(row=0, column=0, padx=(0, 10), sticky="e")
+        self.unit_combobox.current(0)
+        self.unit_combobox.bind("<<ComboboxSelected>>", self.update_settings)
+
+        self.color_mode_combobox = Combobox(settings_frame, values=["Light", "Dark"], state="readonly", font=("Helvetica 13"), width=10)
+        self.color_mode_combobox.grid(row=0, column=1, sticky="e")
+        self.color_mode_combobox.current(0)
+        self.color_mode_combobox.bind("<<ComboboxSelected>>", self.update_settings)
+
+        self.cityname = Label(self.main_frame, text="City: None", font=("Helvetica 15 bold"))
+        self.cityname.grid(row=2, column=0, columnspan=2)
 
         self.searchbar = Entry(self.main_frame, width=42)
-        self.searchbar.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
+        self.searchbar.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
         self.bind("<Return>", self.OWMCITY)
 
         self.info_frame = Frame(self.main_frame, relief="sunken")
-        self.info_frame.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
+        self.info_frame.grid(row=4, column=0, columnspan=2, padx=10, pady=10)
 
         self.label_weather = Label(self.info_frame, text="", font=("Helvetica 13"))
         self.label_weather.grid(row=0, column=0, columnspan=2)
@@ -82,12 +96,14 @@ class App(Tk):
         self.label_windspeed.grid(row=8, column=0, columnspan=2)
 
         # Set up buttons
+        buttons_frame = Frame(self.main_frame)
+        buttons_frame.grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="n")
         self.start_button = Button(
-            self.main_frame, text="Search for City", command=self.OWMCITY
+            buttons_frame, text="Search for City", command=self.OWMCITY,
         )
-        self.start_button.grid(row=12, column=0, padx=10, pady=10)
-        Button(self.main_frame, text="Exit", command=self.exit_app).grid(
-            row=12, column=1, padx=10, pady=10
+        self.start_button.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        Button(buttons_frame, text="Exit", command=self.exit_app).grid(
+            row=0, column=1, padx=10, pady=10, sticky="e"
         )
 
         # Set variables
@@ -147,7 +163,6 @@ class App(Tk):
         mgr = owm.weather_manager()
         # Get city name
         city: str = self.searchbar.get()
-        self.searchbar.delete(0, "end")
 
         # Check if city is empty
         if not city:
@@ -214,12 +229,13 @@ class App(Tk):
         )
 
         # Set the city name
-        self.cityname.configure(text=f"City: {city}")
+        self.cityname.configure(text=f"City: {city.lower().capitalize()}")
 
         # Stop the Progress Bar, enable buttons and searchbar, and set searching to False
         self.start_button.configure(state="normal")
         self.searchbar.configure(state="normal")
         self.searching = False
+        self.searchbar.delete(0, "end")
         self.resize_app()  # In case the name gets too long or it renders differently on other systems
 
     def update_labels(self, data: list[str] = ["" for _ in range(9)]) -> None:
@@ -235,6 +251,11 @@ class App(Tk):
         self.label_visibility.configure(text=data[7])
         self.label_windspeed.configure(text=data[8])
         return None
+    
+    def update_settings(self, _: Event | None = None) -> None:
+        """Updates the settings such as units and color mode"""
+
+
 
 
 if __name__ == "__main__":
