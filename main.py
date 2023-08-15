@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from pathlib import Path
 from platform import system
 from tkinter import Event, Menu, Tk, messagebox
 from tkinter.ttk import Button, Combobox, Entry, Frame, Label
 
+from platformdirs import user_data_dir
 from pyowm import OWM
 from pyowm.commons.exceptions import APIRequestError
 from pyowm.commons.exceptions import NotFoundError as OWMNotFoundError
@@ -11,6 +13,17 @@ from pyowm.commons.exceptions import TimeoutError
 from requests import Response
 from requests import get as requests_get
 from sv_ttk import set_theme
+
+SYSTEM = system()
+data_dir = Path(user_data_dir("Weather", "Futura-Py", ensure_exists=True))
+data_file = Path(str(data_dir / "data.txt"))
+if not data_dir.exists():
+    # Create the directory if it doesn't exist
+    data_dir.mkdir(parents=True)
+    data_file.touch("dark\nmetric")
+elif not data_file.exists():
+    # Write the file if it doesn't exist
+    data_file.write_text("dark\nmetric")
 
 
 class App(Tk):
@@ -32,12 +45,14 @@ class App(Tk):
         self.app_menu.add_command(label="About Weather", command=self.about)
         self.config(menu=self.menubar)
 
-        # Set up style
-        set_theme("light")
-        self.color_mode: str = "light"  # TODO: Read from a file and save to a file
+        # Get file info
+        with open(data_file, "r") as file:
+            data = file.read().splitlines()
+            self.color_mode = data[0]
+            self.units = data[1]
 
-        # Set units to metric
-        self.units: str = "metric"  # TODO: Read from a file and save to a file
+        # Set up style
+        set_theme(self.color_mode)
 
         # Set up window
         self.title("Weather")
@@ -62,7 +77,7 @@ class App(Tk):
             width=10,
         )
         self.unit_combobox.grid(row=0, column=0, padx=(0, 10), sticky="e")
-        self.unit_combobox.current(0)
+        self.unit_combobox.current(0 if self.units == "metric" else 1)
         self.unit_combobox.bind("<<ComboboxSelected>>", self.update_settings)
 
         self.color_mode_combobox = Combobox(
@@ -73,7 +88,7 @@ class App(Tk):
             width=10,
         )
         self.color_mode_combobox.grid(row=0, column=1, sticky="e")
-        self.color_mode_combobox.current(0)
+        self.color_mode_combobox.current(0 if self.color_mode == "light" else 1)
         self.color_mode_combobox.bind("<<ComboboxSelected>>", self.update_settings)
 
         self.cityname = Label(
@@ -166,6 +181,22 @@ class App(Tk):
         """Exit the app."""
         self.destroy()
 
+    def reset_app(self, data: list[str] = ["" for _ in range(9)]) -> None:
+        """Reset the app to its initial state."""
+
+        # Update labels
+        self.update_labels(data)
+
+        # Reset variables
+        self.searching = False
+
+        # Reset widgets
+        self.searchbar.configure(state="normal")
+        self.start_button.configure(state="normal")
+
+        # Resize app
+        self.resize_app()
+
     def OWMCITY(self, _: Event | None = None) -> None:
         """Get the weather for a given city using the OpenWeatherMap API and display it in a label."""
 
@@ -188,13 +219,8 @@ class App(Tk):
 
         # Check if city is empty
         if not city:
-            # TODO: Make a method to reduce code duplication (boilerplate)
             self.cityname.configure(text="City: Needs Name")
-            self.update_labels()
-            self.start_button.configure(state="normal")
-            self.searchbar.configure(state="normal")
-            self.searching = False
-            self.resize_app()  # In case the name gets too long or it renders differently on other systems
+            self.reset_app()
             return
 
         # Check if city exists
@@ -202,11 +228,7 @@ class App(Tk):
             observation = mgr.weather_at_place(city)
         except OWMNotFoundError or APIRequestError or TimeoutError:
             self.cityname.configure(text="City: Not Found")
-            self.update_labels()
-            self.start_button.configure(state="normal")
-            self.searchbar.configure(state="normal")
-            self.searching = False
-            self.resize_app()  # In case the name gets too long or it renders differently on other systems
+            self.reset_app()
             return
 
         # Get weather data
@@ -228,15 +250,14 @@ class App(Tk):
             return
 
         # Get response data, simplify and create variables for usage
-        # TODO: Give all data in dual columns
+        # TODO: Give all data in dual columns (there's unused data!)
         # | Weather: Clear    | Temp: 20°C |
-        # TODO: Allow users to change between imperial and metric (Fahrenheit and Celsius)
         data = response.json()
         main = data["main"]
         temperature = weather.temperature("celsius")
 
         # Update labels
-        self.update_labels(
+        info: list[str] = (
             [
                 f"Weather: {weather.status} ~ {weather.detailed_status}",
                 f"Current Temperature: {temperature.get('temp', None):.2f}°C",
@@ -267,16 +288,14 @@ class App(Tk):
             text=f"City: {', '.join([city.capitalize() for city in city.split(', ')])}"
         )
 
-        # Stop the Progress Bar, enable buttons and searchbar, and set searching to False
-        self.start_button.configure(state="normal")
-        self.searchbar.configure(state="normal")
-        self.searching = False
+        # Reset app
+        self.reset_app(info)
         self.searchbar.delete(0, "end")
-        self.resize_app()  # In case the name gets too long
 
     def update_labels(self, data: list[str] = ["" for _ in range(9)]) -> None:
-        """Clear all weather labels."""
+        """Update the labels with the given data."""
 
+        # Update labels
         self.label_weather.configure(text=data[0])
         self.label_temp.configure(text=data[1])
         self.label_temp_max.configure(text=data[2])
@@ -286,7 +305,6 @@ class App(Tk):
         self.label_pressure.configure(text=data[6])
         self.label_visibility.configure(text=data[7])
         self.label_windspeed.configure(text=data[8])
-        return None
 
     def update_settings(self, _: Event | None = None) -> None:
         """Updates the settings such as units and color mode"""
@@ -295,17 +313,21 @@ class App(Tk):
         if self.color_mode == "light" and self.color_mode_combobox.get() == "Dark":
             set_theme("dark")
             self.color_mode = "dark"
+            self.write_file()
             return
 
         if self.color_mode == "dark" and self.color_mode_combobox.get() == "Light":
             set_theme("light")
             self.color_mode = "light"
+            self.write_file()
             return
 
         # Unit Settings
         if self.units == "metric" and self.unit_combobox.get() == "Imperial":
             self.units = "imperial"
-            if not self.label_weather.cget("text"):
+            if not self.label_weather.cget(
+                "text"
+            ):  # Check that there is data to convert
                 return
             self.update_labels(
                 [
@@ -320,11 +342,14 @@ class App(Tk):
                     f"Wind Speed: {float(self.label_windspeed.cget('text').split(' ')[2])*0.621371:.2f} miles per hour",
                 ]
             )
+            self.write_file()
             return
 
         if self.units == "imperial" and self.unit_combobox.get() == "Metric":
             self.units = "metric"
-            if not self.label_weather.cget("text"):
+            if not self.label_weather.cget(
+                "text"
+            ):  # Check that there is data to convert
                 return
             self.update_labels(
                 [
@@ -339,7 +364,18 @@ class App(Tk):
                     f"Wind Speed: {float(self.label_windspeed.cget('text').split(' ')[2])*1.60934:.2f} meters per second",
                 ]
             )
+            self.write_file()
             return
+
+    def write_file(self) -> None:
+        """Write the settings to the file."""
+
+        with open(data_file, "w") as file:
+            # Clear the file
+            file.truncate(0)
+            file.flush()
+            file.seek(0)
+            file.write(f"{self.color_mode}\n{self.units}")
 
 
 if __name__ == "__main__":
