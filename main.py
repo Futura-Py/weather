@@ -7,7 +7,7 @@ from tkinter.ttk import Button, Combobox, Entry, Frame, Label
 
 from platformdirs import user_data_dir
 from pyowm import OWM
-from pyowm.commons.exceptions import APIRequestError
+from pyowm.commons.exceptions import APIRequestError, InvalidSSLCertificateError
 from pyowm.commons.exceptions import NotFoundError as OWMNotFoundError
 from pyowm.commons.exceptions import TimeoutError
 from requests import Response
@@ -226,7 +226,12 @@ class App(Tk):
         # Check if city exists
         try:
             observation = mgr.weather_at_place(city)
-        except OWMNotFoundError or APIRequestError or TimeoutError:
+        except (
+            OWMNotFoundError
+            or APIRequestError
+            or TimeoutError
+            or InvalidSSLCertificateError
+        ):
             self.cityname.configure(text="City: Not Found")
             self.reset_app()
             return
@@ -284,9 +289,7 @@ class App(Tk):
         )
 
         # Set the city name
-        self.cityname.configure(
-            text=f"City: {data['name']}, {data['sys']['country']}"
-        )
+        self.cityname.configure(text=f"City: {data['name']}, {data['sys']['country']}")
 
         # Reset app
         self.reset_app(info)
