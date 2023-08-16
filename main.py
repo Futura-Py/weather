@@ -14,17 +14,50 @@ from requests import Response
 from requests import get as requests_get
 from sv_ttk import set_theme
 
+# Create constant
 SYSTEM = system()
+
+# Get file info
 data_dir = Path(user_data_dir("Weather", "Futura-Py", ensure_exists=True))
 data_file = Path(str(data_dir / "data.txt"))
+
+# Ensure file directory exists
 if not data_dir.exists():
     # Create the directory if it doesn't exist
     data_dir.mkdir(parents=True)
     data_file.touch("dark\nmetric")
-elif not data_file.exists():
+
+# Ensure file exists and contains the correct data
+if data_file.exists():
+    # Ensure the file contains everything it needs
+    # NOTE: File clearing has caused issues in the past so its better to 
+    # take the safe route and be very sure the file is cleared hence three
+    # clearing methods instead of one
+    with open(data_file, "r+") as f:
+        data = f.read().splitlines()
+        if len(data) != 2:
+            # Clear the file and write the default values
+            f.truncate(0)
+            f.flush()
+            f.seek(0)
+            f.write("dark\nmetric")
+            f.close()
+        else:
+            # Ensure the file contains the correct values
+            if data[0] not in ["light", "dark"] or data[1] not in ["metric", "imperial"]:
+                # Clear the file and write the default values
+                f.truncate(0)
+                f.flush()
+                f.seek(0)
+                f.write("dark\nmetric")
+                f.close()
+            else:
+                # File is good
+                f.close()
+
+else:
     # Write the file if it doesn't exist
     data_file.write_text("dark\nmetric")
-
 
 class App(Tk):
     def __init__(self):
