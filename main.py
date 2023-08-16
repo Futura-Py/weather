@@ -30,7 +30,7 @@ if not data_dir.exists():
 # Ensure file exists and contains the correct data
 if data_file.exists():
     # Ensure the file contains everything it needs
-    # NOTE: File clearing has caused issues in the past so its better to 
+    # NOTE: File clearing has caused issues in the past so its better to
     # take the safe route and be very sure the file is cleared hence three
     # clearing methods instead of one
     with open(data_file, "r+") as f:
@@ -44,7 +44,10 @@ if data_file.exists():
             f.close()
         else:
             # Ensure the file contains the correct values
-            if data[0] not in ["light", "dark"] or data[1] not in ["metric", "imperial"]:
+            if data[0] not in ["light", "dark"] or data[1] not in [
+                "metric",
+                "imperial",
+            ]:
                 # Clear the file and write the default values
                 f.truncate(0)
                 f.flush()
@@ -54,10 +57,10 @@ if data_file.exists():
             else:
                 # File is good
                 f.close()
-
 else:
     # Write the file if it doesn't exist
     data_file.write_text("dark\nmetric")
+
 
 class App(Tk):
     def __init__(self):
@@ -172,7 +175,7 @@ class App(Tk):
             command=self.OWMCITY,
         )
         self.start_button.grid(row=0, column=0, padx=10, pady=10, sticky="w")
-        Button(buttons_frame, text="Exit", command=self.exit_app).grid(
+        Button(buttons_frame, text="Exit", command=self.destroy).grid(
             row=0, column=1, padx=10, pady=10, sticky="e"
         )
 
@@ -209,10 +212,6 @@ class App(Tk):
         # Place app and make the minimum size the actual minimum size (non-infringable)
         self.geometry(f"{minimum_width}x{minimum_height}+{x_coords}+{y_coords}")
         self.wm_minsize(minimum_width, minimum_height)
-
-    def exit_app(self) -> None:
-        """Exit the app."""
-        self.destroy()
 
     def reset_app(self, data: list[str] = ["" for _ in range(9)]) -> None:
         """Reset the app to its initial state."""
@@ -350,13 +349,11 @@ class App(Tk):
             set_theme("dark")
             self.color_mode = "dark"
             self.write_file()
-            return
 
         if self.color_mode == "dark" and self.color_mode_combobox.get() == "Light":
             set_theme("light")
             self.color_mode = "light"
             self.write_file()
-            return
 
         # Unit Settings
         if self.units == "metric" and self.unit_combobox.get() == "Imperial":
@@ -379,7 +376,6 @@ class App(Tk):
                 ]
             )
             self.write_file()
-            return
 
         if self.units == "imperial" and self.unit_combobox.get() == "Metric":
             self.units = "metric"
@@ -401,7 +397,6 @@ class App(Tk):
                 ]
             )
             self.write_file()
-            return
 
     def write_file(self) -> None:
         """Write the settings to the file."""

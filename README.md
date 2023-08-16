@@ -35,29 +35,30 @@ To exit the app, click the "Exit" button.
 
 Additionally, the code contains several functions, methods, and classes:
 
-### `self_return_decorator()`
-A decorator function that allows for chaining of methods. This function takes a method as an argument and returns a new function that calls the original method and returns the instance of the class.
-
 ### `App()`
 A class that inherits from the Tk class and defines the main window of the app. The __init__ method sets up the menubar, window, and widgets. The about, resize_app, exit_app, and OWMCITY methods define the behavior of the corresponding buttons in the app.
 
-### `.about()`
+#### `.about()`
 A method that displays a message box with information about the app.
 
-### `.resize_app()`
+#### `.resize_app()`
 A method that uses tkinter to detect the minimum size of the app, get the center of the screen, and place the app there.
 
-### `.exit_app()`
-A method that exits the app.
+#### `.reset_app()`
+This method clears all the labels or can take an input of 9 strings in a list and set each label to the corresponding string.
 
-### `.OWMCITY()`
-A method that sends a request to the OpenWeatherMap API to get the weather for a given city and displays the temperature in Celsius in the label. If the city is not found, the label displays an error message.
+#### `.OWMCITY()`
+A method that sends a request to the OpenWeatherMap API to get the weather for a given city. Once the data is recieved, the method determines wether the call worked and if not, updates the city label correspondingly. If the API call does indeed succeed, it will update the labels by calling `.update_labels()` with a list of 9 strings corresponding to the data recieved. Note that because the application allows changing of units from Celsius to Fahreinheight (Metric/Imperial), it will run some calculations to convert the data to the proper units.
 
-# Final Notes
+#### `.update_labels()`
+This method takes an input of 9 strings which default to all empty strings that allow the application to modify the weather info labels with one's desired text.
+
+#### `.update_settings()`
+This method runs when a user uses one or the other settings dropdowns and it determines if a setting was changed and, if so, it updates the settigns file accordingly and updates any labels to the proper units or the color theme to the chosen one.
 
 ## Contributing
 
-Contributions are welcome! If you find a bug or have an idea for a new feature, please open an [issue](https://github.com/Futura-Py/weather/issues/new) or submit a [pull request](https://github.com/Futura-Py/weather/compare). 
+Contributions are welcome! If you find a bug, typo, or have an idea for a new feature, please open an [issue](https://github.com/Futura-Py/weather/issues/new) or submit a [pull request](https://github.com/Futura-Py/weather/compare). 
 ## Pre-Commit Actions
 
 Before making any commits, run the following command:
