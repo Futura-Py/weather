@@ -58,6 +58,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Setup Python 3.11.1
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11.1
 
     - name: Install requirements
       run: |
@@ -84,6 +89,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Setup Python 3.11.1
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11.1
 
     - name: Install Python dependencies and build
       run: |
