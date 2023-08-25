@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from platform import system
-from tkinter import Event, Menu, Tk, messagebox
+from tkinter import Event, Menu, PhotoImage, Tk, messagebox, TclError
 from tkinter.ttk import Button, Combobox, Entry, Frame, Label
 
 from platformdirs import user_data_dir
@@ -68,7 +68,7 @@ class App(Tk):
         self.withdraw()
 
         # Set up Menubar
-        if system() == "Darwin":
+        if SYSTEM == "Darwin":
             self.menubar = Menu(self)
 
             # Apple menus have special names and special commands
@@ -94,6 +94,21 @@ class App(Tk):
         self.title("Weather")
         self.resizable(False, False)
         self.configure(bg="white")
+
+        # Set up icon
+        try:
+            if SYSTEM == "darwin":
+                self.iconbitmap("./assets/icon.icns")
+            elif SYSTEM == "Windows":
+                self.iconbitmap("./assets/icon.ico")
+            else:
+                logo_img = PhotoImage(file="./assets/icon.png")
+                self.iconphoto(False, logo_img)
+        except TclError:
+            try:
+                self.iconphoto("./assets/icon.ico")
+            except TclError:
+                pass
 
         # Set up widgets
         self.main_frame = Frame(self)
