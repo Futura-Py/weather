@@ -4,6 +4,7 @@ from pathlib import Path
 from platform import system
 from tkinter import Event, Menu, PhotoImage, Tk, messagebox, TclError
 from tkinter.ttk import Button, Combobox, Entry, Frame, Label
+from tkinter.messagebox import askyesno
 
 from platformdirs import user_data_dir
 from pyowm import OWM
@@ -13,6 +14,9 @@ from pyowm.commons.exceptions import TimeoutError
 from requests import Response
 from requests import get as requests_get
 from sv_ttk import set_theme
+from webbrowser import open as openwebpage
+
+VERSION = "0.1"
 
 # Create constant
 SYSTEM = system()
@@ -66,6 +70,8 @@ class App(Tk):
     def __init__(self):
         super().__init__()
         self.withdraw()
+
+        self.check_for_updates()
 
         # Set up Menubar
         if SYSTEM == "Darwin":
@@ -422,6 +428,18 @@ class App(Tk):
             file.flush()
             file.seek(0)
             file.write(f"{self.color_mode}\n{self.units}")
+
+    def check_for_updates(self) -> None:
+        # Check github for newer version
+
+        self.api_response = requests_get("https://api.github.com/repos/Futura-Py/weather/releases/latest")
+        self.latest_tag = self.api_response.json()["tag_name"].removeprefix("v")
+
+        if VERSION != self.latest_tag:
+            self.doupdate = askyesno("Update available!", "Do you want to update to the newest version?")
+            if self.doupdate:
+                openwebpage(self.api_response.json()["html_url"])
+                self.destroy()
 
 
 if __name__ == "__main__":
