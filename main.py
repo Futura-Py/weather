@@ -71,8 +71,6 @@ class App(Tk):
         super().__init__()
         self.withdraw()
 
-        self.check_for_updates()
-
         # Set up Menubar
         if SYSTEM == "Darwin":
             self.menubar = Menu(self)
@@ -203,9 +201,10 @@ class App(Tk):
         # Set variables
         self.searching: bool = False
 
-        # Resize and deiconify
+        # Resize, deiconify and check for updates
         self.resize_app()
         self.deiconify()
+        self.check_for_updates()
 
     def about(self) -> None:
         """Display a messagebox with information about the app."""
@@ -436,7 +435,7 @@ class App(Tk):
         self.latest_tag = self.api_response.json()["tag_name"].removeprefix("v")
 
         if VERSION != self.latest_tag:
-            self.doupdate = askyesno("Update available!", "Do you want to update to the newest version?")
+            self.doupdate = askyesno("Update available!", "Do you want to update to the newest version?", master=self)
             if self.doupdate:
                 openwebpage(self.api_response.json()["html_url"])
                 self.destroy()
