@@ -4,7 +4,6 @@ from pathlib import Path
 from platform import system
 from tkinter import Event, Menu, PhotoImage, Tk, messagebox, TclError
 from tkinter.ttk import Button, Combobox, Entry, Frame, Label
-from tkinter.messagebox import askyesno
 
 from platformdirs import user_data_dir
 from pyowm import OWM
@@ -15,6 +14,8 @@ from requests import Response
 from requests import get as requests_get
 from sv_ttk import set_theme
 from webbrowser import open as openwebpage
+
+from dialogs import ask_yes_no
 
 VERSION = "0.1"
 
@@ -435,7 +436,7 @@ class App(Tk):
         self.latest_tag = self.api_response.json()["tag_name"].removeprefix("v")
 
         if VERSION != self.latest_tag:
-            self.doupdate = askyesno("Update available!", "Do you want to update to the newest version?", master=self)
+            self.doupdate = ask_yes_no("Update available!", "Do you want to update to the newest version?")
             if self.doupdate:
                 openwebpage(self.api_response.json()["html_url"])
                 self.destroy()
