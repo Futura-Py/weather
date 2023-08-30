@@ -436,7 +436,7 @@ class App(Tk):
         self.latest_tag = self.api_response.json()["tag_name"].removeprefix("v")
 
         if VERSION != self.latest_tag:
-            self.doupdate = ask_yes_no("Update available!", "Do you want to update to the newest version?")
+            self.doupdate = ask_yes_no("Update available!", "\nDo you want to update to the newest version?\n\nYou will be redirected to our release page where you can download the newest binaries.")
             if self.doupdate:
                 openwebpage(self.api_response.json()["html_url"])
                 self.destroy()
