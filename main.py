@@ -15,7 +15,7 @@ from requests import get as requests_get
 from sv_ttk import set_theme
 from webbrowser import open as openwebpage
 
-from dialogs import ask_yes_no
+from dialogs import Messagebox
 
 VERSION = "0.1"
 
@@ -436,8 +436,8 @@ class App(Tk):
         self.latest_tag = self.api_response.json()["tag_name"].removeprefix("v")
 
         if VERSION != self.latest_tag:
-            self.doupdate = ask_yes_no("Update available!", "\nDo you want to update to the newest version?\n\nYou will be redirected to our release page where you can download the newest binaries.")
-            if self.doupdate:
+            self.doupdate = Messagebox(self, "Update available!", "\nDo you want to update to the newest version?\n\nYou will be redirected to our release page where you can download the newest binaries.", None, buttons=[("Yes", True, "accent"), ("No", False)])
+            if self.doupdate.result:
                 openwebpage(self.api_response.json()["html_url"])
                 self.destroy()
 
