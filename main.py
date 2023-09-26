@@ -13,6 +13,11 @@ from pyowm.commons.exceptions import TimeoutError
 from requests import Response
 from requests import get as requests_get
 from sv_ttk import set_theme
+from webbrowser import open as openwebpage
+
+from dialogs import Messagebox
+
+VERSION = "0.1"
 
 # Create constant
 SYSTEM = system()
@@ -211,9 +216,10 @@ class App(Tk):
         # Set variables
         self.searching: bool = False
 
-        # Resize and deiconify
+        # Resize, deiconify and check for updates
         self.resize_app()
         self.deiconify()
+        self.check_for_updates()
 
     def about(self) -> None:
         """Display a messagebox with information about the app."""
@@ -439,6 +445,18 @@ class App(Tk):
             file.flush()
             file.seek(0)
             file.write(f"{self.color_mode}\n{self.units}")
+
+    def check_for_updates(self) -> None:
+        # Check github for newer version
+
+        self.api_response = requests_get("https://api.github.com/repos/Futura-Py/weather/releases/latest")
+        self.latest_tag = self.api_response.json()["tag_name"].removeprefix("v")
+
+        if VERSION != self.latest_tag:
+            self.doupdate = Messagebox(self, "Update available!", "\nDo you want to update to the newest version?\n\nYou will be redirected to our release page where you can download the newest binaries.", None, buttons=[("Yes", True, "accent"), ("No", False)])
+            if self.doupdate.result:
+                openwebpage(self.api_response.json()["html_url"])
+                self.destroy()
 
 
 if __name__ == "__main__":
