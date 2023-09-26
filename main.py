@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from platform import system
-from tkinter import Event, Menu, PhotoImage, Tk, messagebox, TclError
+from tkinter import Event, Menu, PhotoImage, TclError, Tk, messagebox
 from tkinter.ttk import Button, Combobox, Entry, Frame, Label
 
 from platformdirs import user_data_dir
@@ -119,11 +119,13 @@ class App(Tk):
         self.main_frame = Frame(self)
         self.main_frame.grid()
 
-        heading = Label(self.main_frame, text="Weather", font="Helvetica 25 bold")
+        heading = Label(self.main_frame, text="Weather",
+                        font="Helvetica 25 bold")
         heading.grid(row=0, column=0, padx=10, pady=10)
 
         settings_frame = Frame(self.main_frame)
-        settings_frame.grid(row=0, column=1, padx=(0, 10), pady=(10, 0), sticky="w")
+        settings_frame.grid(row=0, column=1, padx=(0, 10),
+                            pady=(10, 0), sticky="w")
 
         self.unit_combobox = Combobox(
             settings_frame,
@@ -144,8 +146,10 @@ class App(Tk):
             width=10,
         )
         self.color_mode_combobox.grid(row=0, column=1, sticky="e")
-        self.color_mode_combobox.current(0 if self.color_mode == "light" else 1)
-        self.color_mode_combobox.bind("<<ComboboxSelected>>", self.update_settings)
+        self.color_mode_combobox.current(
+            0 if self.color_mode == "light" else 1)
+        self.color_mode_combobox.bind(
+            "<<ComboboxSelected>>", self.update_settings)
 
         self.cityname = Label(
             self.main_frame, text="City: None", font=("Helvetica 15 bold")
@@ -159,36 +163,46 @@ class App(Tk):
         self.info_frame = Frame(self.main_frame, relief="sunken")
         self.info_frame.grid(row=4, column=0, columnspan=2, padx=10, pady=10)
 
-        self.label_weather = Label(self.info_frame, text="", font=("Helvetica 13"))
+        self.label_weather = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
         self.label_weather.grid(row=0, column=0, columnspan=2)
 
-        self.label_temp = Label(self.info_frame, text="", font=("Helvetica 13"))
+        self.label_temp = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
         self.label_temp.grid(row=1, column=0, columnspan=2)
 
-        self.label_temp_max = Label(self.info_frame, text="", font=("Helvetica 13"))
+        self.label_temp_max = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
         self.label_temp_max.grid(row=2, column=0, columnspan=2)
 
-        self.label_temp_min = Label(self.info_frame, text="", font=("Helvetica 13"))
+        self.label_temp_min = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
         self.label_temp_min.grid(row=3, column=0, columnspan=2)
 
-        self.label_feels_like = Label(self.info_frame, text="", font=("Helvetica 13"))
+        self.label_feels_like = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
         self.label_feels_like.grid(row=4, column=0, columnspan=2)
 
-        self.label_humidity = Label(self.info_frame, text="", font=("Helvetica 13"))
+        self.label_humidity = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
         self.label_humidity.grid(row=5, column=0, columnspan=2)
 
-        self.label_pressure = Label(self.info_frame, text="", font=("Helvetica 13"))
+        self.label_pressure = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
         self.label_pressure.grid(row=6, column=0, columnspan=2)
 
-        self.label_visibility = Label(self.info_frame, text="", font=("Helvetica 13"))
+        self.label_visibility = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
         self.label_visibility.grid(row=7, column=0, columnspan=2)
 
-        self.label_windspeed = Label(self.info_frame, text="", font=("Helvetica 13"))
+        self.label_windspeed = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
         self.label_windspeed.grid(row=8, column=0, columnspan=2)
 
         # Set up buttons
         buttons_frame = Frame(self.main_frame)
-        buttons_frame.grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="n")
+        buttons_frame.grid(row=5, column=0, columnspan=2,
+                           padx=10, pady=10, sticky="n")
         self.start_button = Button(
             buttons_frame,
             text="Search for City",
@@ -231,7 +245,8 @@ class App(Tk):
         y_coords = int(self.wm_maxsize()[1] / 2 - minimum_height / 2)
 
         # Place app and make the minimum size the actual minimum size (non-infringable)
-        self.geometry(f"{minimum_width}x{minimum_height}+{x_coords}+{y_coords}")
+        self.geometry(
+            f"{minimum_width}x{minimum_height}+{x_coords}+{y_coords}")
         self.wm_minsize(minimum_width, minimum_height)
 
     def reset_app(self, data: list[str] = ["" for _ in range(9)]) -> None:
@@ -304,7 +319,8 @@ class App(Tk):
             self.start_button.configure(state="normal")
             self.searchbar.configure(state="normal")
             self.searching = False
-            self.resize_app()  # In case the name gets too long or it renders differently on other systems
+            # In case the name gets too long or it renders differently on other systems
+            self.resize_app()
             return
 
         # Get response data, simplify and create variables for usage
@@ -342,7 +358,8 @@ class App(Tk):
         )
 
         # Set the city name
-        self.cityname.configure(text=f"City: {data['name']}, {data['sys']['country']}")
+        self.cityname.configure(
+            text=f"City: {data['name']}, {data['sys']['country']}")
 
         # Reset app
         self.reset_app(info)
