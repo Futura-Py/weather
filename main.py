@@ -4,6 +4,7 @@ from pathlib import Path
 from platform import system
 from tkinter import Event, Menu, PhotoImage, TclError, Tk, messagebox
 from tkinter.ttk import Button, Combobox, Entry, Frame, Label
+from webbrowser import open as openwebpage
 
 from platformdirs import user_data_dir
 from pyowm import OWM
@@ -13,7 +14,6 @@ from pyowm.commons.exceptions import TimeoutError
 from requests import Response
 from requests import get as requests_get
 from sv_ttk import set_theme
-from webbrowser import open as openwebpage
 
 from dialogs import Messagebox
 
@@ -449,11 +449,20 @@ class App(Tk):
     def check_for_updates(self) -> None:
         # Check github for newer version
 
-        self.api_response = requests_get("https://api.github.com/repos/Futura-Py/weather/releases/latest")
-        self.latest_tag = self.api_response.json()["tag_name"].removeprefix("v")
+        self.api_response = requests_get(
+            "https://api.github.com/repos/Futura-Py/weather/releases/latest"
+        )
+        self.latest_tag = self.api_response.json()[
+            "tag_name"].removeprefix("v")
 
         if VERSION != self.latest_tag:
-            self.doupdate = Messagebox(self, "Update available!", "\nDo you want to update to the newest version?\n\nYou will be redirected to our release page where you can download the newest binaries.", None, buttons=[("Yes", True, "accent"), ("No", False)])
+            self.doupdate = Messagebox(
+                self,
+                "Update available!",
+                "\nDo you want to update to the newest version?\n\nYou will be redirected to our release page where you can download the newest binaries.",
+                None,
+                buttons=[("Yes", True, "accent"), ("No", False)],
+            )
             if self.doupdate.result:
                 openwebpage(self.api_response.json()["html_url"])
                 self.destroy()
