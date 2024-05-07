@@ -160,48 +160,9 @@ class App(Tk):
         self.searchbar.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
         self.bind("<Return>", self.OWMCITY)
 
-        self.info_frame = Frame(self.main_frame, relief="sunken")
-        self.info_frame.grid(row=4, column=0, columnspan=2, padx=10, pady=10)
-
-        self.label_weather = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
-        self.label_weather.grid(row=0, column=0, columnspan=2)
-
-        self.label_temp = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
-        self.label_temp.grid(row=1, column=0, columnspan=2)
-
-        self.label_temp_max = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
-        self.label_temp_max.grid(row=2, column=0, columnspan=2)
-
-        self.label_temp_min = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
-        self.label_temp_min.grid(row=3, column=0, columnspan=2)
-
-        self.label_feels_like = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
-        self.label_feels_like.grid(row=4, column=0, columnspan=2)
-
-        self.label_humidity = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
-        self.label_humidity.grid(row=5, column=0, columnspan=2)
-
-        self.label_pressure = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
-        self.label_pressure.grid(row=6, column=0, columnspan=2)
-
-        self.label_visibility = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
-        self.label_visibility.grid(row=7, column=0, columnspan=2)
-
-        self.label_windspeed = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
-        self.label_windspeed.grid(row=8, column=0, columnspan=2)
-
         # Set up buttons
         buttons_frame = Frame(self.main_frame)
-        buttons_frame.grid(row=5, column=0, columnspan=2,
+        buttons_frame.grid(row=4, column=0, columnspan=2,
                            padx=10, pady=10, sticky="n")
         self.start_button = Button(
             buttons_frame,
@@ -245,8 +206,8 @@ class App(Tk):
         y_coords = int(self.wm_maxsize()[1] / 2 - minimum_height / 2)
 
         # Place app and make the minimum size the actual minimum size (non-infringable)
-        self.geometry(
-            f"{minimum_width}x{minimum_height}+{x_coords}+{y_coords}")
+        self.geometry(f"{minimum_width}x{
+                      minimum_height}+{x_coords}+{y_coords}")
         self.wm_minsize(minimum_width, minimum_height)
 
     def reset_app(self, data: list[str] = ["" for _ in range(9)]) -> None:
@@ -309,7 +270,8 @@ class App(Tk):
 
         # Send request to OpenWeatherMap API
         response: Response = requests_get(
-            f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}"
+            f"http://api.openweathermap.org/data/2.5/weather?q={
+                city}&appid={api_key}"
         )
 
         # Check if request was successful
@@ -335,49 +297,91 @@ class App(Tk):
             [
                 f"Weather: {weather.status} ~ {weather.detailed_status}",
                 f"Current Temperature: {temperature.get('temp', None):.2f}°C",
-                f"Maximum Temperature: {temperature.get('temp_max', None):.2f}°C",
-                f"Minimum Temperature: {temperature.get('temp_min', None):.2f}°C",
+                f"Maximum Temperature: {
+                    temperature.get('temp_max', None):.2f}°C",
+                f"Minimum Temperature: {
+                    temperature.get('temp_min', None):.2f}°C",
                 f"Feels like {temperature.get('feels_like', None):.2f}°C",
                 f"Humidity: {main['humidity']:.2f}%",
                 f"Pressure: {main['pressure']:.2f} hPa",
                 f"Visibility: {weather.visibility(unit='kilometers'):.2f} km",
-                f"Wind Speed: { weather.wind(unit='meters_sec')['speed']:.2f} meters per second",
+                f"Wind Speed: {weather.wind(unit='meters_sec')[
+                    'speed']:.2f} meters per second",
             ]
             if self.units == "metric"
             else [
                 f"Weather: {weather.status} ~ {weather.detailed_status}",
-                f"Current Temperature: {(temperature.get('temp', None)*(9/5))+32:.2f}°F",
-                f"Maximum Temperature: {(temperature.get('temp_max', None)*(9/5))+32:.2f}°F",
-                f"Minimum Temperature: {(temperature.get('temp_min', None)*(9/5))+32:.2f}°F",
-                f"Feels like {(temperature.get('feels_like', None)*(9/5))+32:.2f}°F",
+                f"Current Temperature: {
+                    (temperature.get('temp', None)*(9/5))+32:.2f}°F",
+                f"Maximum Temperature: {
+                    (temperature.get('temp_max', None)*(9/5))+32:.2f}°F",
+                f"Minimum Temperature: {
+                    (temperature.get('temp_min', None)*(9/5))+32:.2f}°F",
+                f"Feels like {
+                    (temperature.get('feels_like', None)*(9/5))+32:.2f}°F",
                 f"Humidity: {main['humidity']:.2f}%",
                 f"Pressure: {main['pressure']*.0145038:.2f} psi",
                 f"Visibility: {weather.visibility(unit='miles'):.2f} miles",
-                f"Wind Speed: { weather.wind(unit='miles_hour')['speed']:.2f} miles per hour",
+                f"Wind Speed: {weather.wind(unit='miles_hour')[
+                    'speed']:.2f} miles per hour",
             ]
         )
 
         # Set the city name
-        self.cityname.configure(
-            text=f"City: {data['name']}, {data['sys']['country']}")
+        self.cityname.configure(text=f"City: {data['name']}, {
+                                data['sys']['country']}")
 
         # Reset app
         self.reset_app(info)
         self.searchbar.delete(0, "end")
 
     def update_labels(self, data: list[str] = ["" for _ in range(9)]) -> None:
-        """Update the labels with the given data."""
+        """Create new and specific labels with the given data."""
+        self.info_frame = Frame(self.main_frame, relief="sunken")
+        self.info_frame.grid(row=5, column=0, columnspan=2, padx=10, pady=10)
 
-        # Update labels
-        self.label_weather.configure(text=data[0])
-        self.label_temp.configure(text=data[1])
-        self.label_temp_max.configure(text=data[2])
-        self.label_temp_min.configure(text=data[3])
-        self.label_feels_like.configure(text=data[4])
-        self.label_humidity.configure(text=data[5])
-        self.label_pressure.configure(text=data[6])
-        self.label_visibility.configure(text=data[7])
-        self.label_windspeed.configure(text=data[8])
+        self.label_weather = Label(
+            self.info_frame, text=data[0], font=("Helvetica 13"))
+        self.label_weather.grid(row=0, column=0, columnspan=2)
+
+        self.label_temp = Label(
+            self.info_frame, text=data[1], font=("Helvetica 13"))
+        self.label_temp.grid(row=1, column=0, columnspan=2)
+
+        self.label_temp_max = Label(
+            self.info_frame, text=data[2], font=("Helvetica 13")
+        )
+        self.label_temp_max.grid(row=2, column=0, columnspan=2)
+
+        self.label_temp_min = Label(
+            self.info_frame, text=data[3], font=("Helvetica 13")
+        )
+        self.label_temp_min.grid(row=3, column=0, columnspan=2)
+
+        self.label_feels_like = Label(
+            self.info_frame, text=data[4], font=("Helvetica 13")
+        )
+        self.label_feels_like.grid(row=4, column=0, columnspan=2)
+
+        self.label_humidity = Label(
+            self.info_frame, text=data[5], font=("Helvetica 13")
+        )
+        self.label_humidity.grid(row=5, column=0, columnspan=2)
+
+        self.label_pressure = Label(
+            self.info_frame, text=data[6], font=("Helvetica 13")
+        )
+        self.label_pressure.grid(row=6, column=0, columnspan=2)
+
+        self.label_visibility = Label(
+            self.info_frame, text=data[7], font=("Helvetica 13")
+        )
+        self.label_visibility.grid(row=7, column=0, columnspan=2)
+
+        self.label_windspeed = Label(
+            self.info_frame, text=data[8], font=("Helvetica 13")
+        )
+        self.label_windspeed.grid(row=8, column=0, columnspan=2)
 
     def update_settings(self, _: Event | None = None) -> None:
         """Updates the settings such as units and color mode"""
@@ -406,11 +410,15 @@ class App(Tk):
                     f"Current Temperature: {(float(self.label_temp.cget('text').split('°')[0].split(': ')[1]))*(9/5)+32:.2f}°F",  # noqa: E501
                     f"Maximum Temperature: {(float(self.label_temp_max.cget('text').split('°')[0].split(': ')[1]))*(9/5)+32:.2f}°F",  # noqa: E501
                     f"Minimum Temperature: {(float(self.label_temp_min.cget('text').split('°')[0].split(': ')[1])*(9/5))+32:.2f}°F",  # noqa: E501
-                    f"Feels like {float(self.label_feels_like.cget('text').split('°')[0].split(' ')[2])*(9/5)+32:.2f}°F",
+                    f"Feels like {float(self.label_feels_like.cget(
+                        'text').split('°')[0].split(' ')[2])*(9/5)+32:.2f}°F",
                     self.label_humidity.cget("text"),
-                    f"Pressure: {float(self.label_pressure.cget('text').split(' ')[1])*.0145038:.2f} psi",
-                    f"Visibility: {float(self.label_visibility.cget('text').split(' ')[1])*0.621371:.2f} miles",
-                    f"Wind Speed: {float(self.label_windspeed.cget('text').split(' ')[2])*0.621371:.2f} miles per hour",
+                    f"Pressure: {float(self.label_pressure.cget(
+                        'text').split(' ')[1])*.0145038:.2f} psi",
+                    f"Visibility: {float(self.label_visibility.cget(
+                        'text').split(' ')[1])*0.621371:.2f} miles",
+                    f"Wind Speed: {float(self.label_windspeed.cget(
+                        'text').split(' ')[2])*0.621371:.2f} miles per hour",
                 ]
             )
             self.write_file()
@@ -427,11 +435,15 @@ class App(Tk):
                     f"Current Temperature: {(5/9)*((float(self.label_temp.cget('text').split('°')[0].split(': ')[1])-32)):.2f}°C",  # noqa: E501
                     f"Maximum Temperature: {(5/9)*((float(self.label_temp_max.cget('text').split('°')[0].split(': ')[1])-32)):.2f}°C",  # noqa: E501
                     f"Minimum Temperature: {(5/9)*((float(self.label_temp_min.cget('text').split('°')[0].split(': ')[1])-32)):.2f}°C",  # noqa: E501
-                    f"Feels like {(5/9)*((float(self.label_feels_like.cget('text').split('°')[0].split(' ')[2])-32)):.2f}°C",
+                    f"Feels like {
+                        (5/9)*((float(self.label_feels_like.cget('text').split('°')[0].split(' ')[2])-32)):.2f}°C",
                     self.label_humidity.cget("text"),
-                    f"Pressure: {float(self.label_pressure.cget('text').split(' ')[1])*68.9476:.2f} hPa",
-                    f"Visibility: {float(self.label_visibility.cget('text').split(' ')[1])*1.60934:.2f} km",
-                    f"Wind Speed: {float(self.label_windspeed.cget('text').split(' ')[2])*1.60934:.2f} meters per second",
+                    f"Pressure: {float(self.label_pressure.cget(
+                        'text').split(' ')[1])*68.9476:.2f} hPa",
+                    f"Visibility: {float(self.label_visibility.cget(
+                        'text').split(' ')[1])*1.60934:.2f} km",
+                    f"Wind Speed: {float(self.label_windspeed.cget('text').split(' ')[
+                                         2])*1.60934:.2f} meters per second",
                 ]
             )
             self.write_file()
