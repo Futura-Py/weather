@@ -84,6 +84,7 @@ class App(Tk):
             self.app_menu = Menu(self.menubar, tearoff=0)
             self.menubar.add_cascade(label="App", menu=self.app_menu)
         self.app_menu.add_command(label="About Weather", command=self.about)
+        self.app_menu.add_command(label="Settings")
         self.config(menu=self.menubar)
 
         # Get file info
@@ -164,13 +165,18 @@ class App(Tk):
         buttons_frame = Frame(self.main_frame)
         buttons_frame.grid(row=4, column=0, columnspan=2,
                            padx=10, pady=10, sticky="n")
+
+        self.search_icon = PhotoImage(file="./assets/search.png")
+        self.exit_icon = PhotoImage(file="./assets/exit.png")
         self.start_button = Button(
             buttons_frame,
-            text="Search for City",
+            text="Search",
+            image=self.search_icon,
             command=self.OWMCITY,
+            compound="left"
         )
         self.start_button.grid(row=0, column=0, padx=10, pady=10, sticky="w")
-        Button(buttons_frame, text="Exit", command=self.destroy).grid(
+        Button(buttons_frame, text="Exit", image=self.exit_icon, compound="left", command=self.destroy).grid(
             row=0, column=1, padx=10, pady=10, sticky="e"
         )
 
@@ -187,7 +193,7 @@ class App(Tk):
 
         messagebox.showinfo(
             "About Weather",
-            "Weather is a simple weather app that uses the OpenWeatherMap API to get the weather for a given city.",
+            "Weather is a simple weather app that uses the OpenWeatherMap API to get the weather for a given city.\nSearch and exit icons are acquired from Icons8.",
             parent=self,
         )
 
