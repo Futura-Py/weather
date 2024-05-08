@@ -197,6 +197,8 @@ class App(Tk):
 
         Button(buttons,text="Exit", image=self.exit_icon, compound="left", command=self.settings.destroy).grid(row=0, column=0, padx=10, pady=10, sticky="w")
         self.resize_app()
+        self.settings.focus()
+        self.settings.attributes("-topmost", "true")
 
     def about(self) -> None:
         """Display a messagebox with information about the app."""
