@@ -151,6 +151,44 @@ class App(Tk):
         Button(buttons_frame, text="Exit", image=self.exit_icon, compound="left", command=self.destroy).grid(
             row=0, column=1, padx=10, pady=10, sticky="e"
         )
+        self.info_frame = Frame(self.main_frame, relief="sunken")
+        self.info_frame.grid(row=5, column=0, columnspan=2, padx=10, pady=10)
+
+        self.label_weather = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_weather.grid(row=0, column=0, columnspan=2)
+
+        self.label_temp = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_temp.grid(row=1, column=0, columnspan=2)
+
+        self.label_temp_max = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_temp_max.grid(row=2, column=0, columnspan=2)
+
+        self.label_temp_min = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_temp_min.grid(row=3, column=0, columnspan=2)
+
+        self.label_feels_like = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_feels_like.grid(row=4, column=0, columnspan=2)
+
+        self.label_humidity = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_humidity.grid(row=5, column=0, columnspan=2)
+
+        self.label_pressure = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_pressure.grid(row=6, column=0, columnspan=2)
+
+        self.label_visibility = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_visibility.grid(row=7, column=0, columnspan=2)
+
+        self.label_windspeed = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_windspeed.grid(row=8, column=0, columnspan=2)
 
         # Set variables
         self.searching: bool = False
@@ -199,6 +237,7 @@ class App(Tk):
         self.resize_app()
         self.settings.focus()
         self.settings.attributes("-topmost", "true")
+        
 
     def about(self) -> None:
         """Display a messagebox with information about the app."""
@@ -354,52 +393,17 @@ class App(Tk):
         self.searchbar.delete(0, "end")
 
     def update_labels(self, data: list[str] = ["" for _ in range(9)]) -> None:
-        """Create new and specific labels with the given data."""
-        self.info_frame = Frame(self.main_frame, relief="sunken")
-        self.info_frame.grid(row=5, column=0, columnspan=2, padx=10, pady=10)
+        
+        self.label_weather.configure(text=data[0])
+        self.label_temp.configure(text=data[1])
+        self.label_temp_max.configure(text=data[2])
+        self.label_temp_min.configure(text=data[3])
+        self.label_feels_like.configure(text=data[4])
+        self.label_humidity.configure(text=data[5])
+        self.label_pressure.configure(text=data[6])
+        self.label_visibility.configure(text=data[7])
+        self.label_windspeed.configure(text=data[8])
 
-        self.label_weather = Label(
-            self.info_frame, text=data[0], font=("Helvetica 13"))
-        self.label_weather.grid(row=0, column=0, columnspan=2)
-
-        self.label_temp = Label(
-            self.info_frame, text=data[1], font=("Helvetica 13"))
-        self.label_temp.grid(row=1, column=0, columnspan=2)
-
-        self.label_temp_max = Label(
-            self.info_frame, text=data[2], font=("Helvetica 13")
-        )
-        self.label_temp_max.grid(row=2, column=0, columnspan=2)
-
-        self.label_temp_min = Label(
-            self.info_frame, text=data[3], font=("Helvetica 13")
-        )
-        self.label_temp_min.grid(row=3, column=0, columnspan=2)
-
-        self.label_feels_like = Label(
-            self.info_frame, text=data[4], font=("Helvetica 13")
-        )
-        self.label_feels_like.grid(row=4, column=0, columnspan=2)
-
-        self.label_humidity = Label(
-            self.info_frame, text=data[5], font=("Helvetica 13")
-        )
-        self.label_humidity.grid(row=5, column=0, columnspan=2)
-
-        self.label_pressure = Label(
-            self.info_frame, text=data[6], font=("Helvetica 13")
-        )
-        self.label_pressure.grid(row=6, column=0, columnspan=2)
-
-        self.label_visibility = Label(
-            self.info_frame, text=data[7], font=("Helvetica 13")
-        )
-        self.label_visibility.grid(row=7, column=0, columnspan=2)
-
-        self.label_windspeed = Label(
-            self.info_frame, text=data[8], font=("Helvetica 13")
-        )
-        self.label_windspeed.grid(row=8, column=0, columnspan=2)
 
     def update_settings(self, _: Event | None = None) -> None:
         """Updates the settings such as units and color mode"""
