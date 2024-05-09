@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from platform import system
-from tkinter import Event, Menu, PhotoImage, TclError, Tk, messagebox
+from tkinter import Event, Menu, PhotoImage, TclError, Tk, messagebox, Toplevel
 from tkinter.ttk import Button, Combobox, Entry, Frame, Label
 from webbrowser import open as openwebpage
 
@@ -78,13 +78,13 @@ class App(Tk):
 
             # Apple menus have special names and special commands
             self.app_menu = Menu(self.menubar, tearoff=0, name="apple")
-            self.menubar.add_cascade(label="App", menu=self.app_menu)
+            self.menubar.add_cascade(label="Menu", menu=self.app_menu)
         else:
             self.menubar = Menu(self)
             self.app_menu = Menu(self.menubar, tearoff=0)
-            self.menubar.add_cascade(label="App", menu=self.app_menu)
+            self.menubar.add_cascade(label="Menu", menu=self.app_menu)
         self.app_menu.add_command(label="About Weather", command=self.about)
-        self.app_menu.add_command(label="Settings")
+        self.app_menu.add_command(label="Settings", command=self.settings_window)
         self.config(menu=self.menubar)
 
         # Get file info
@@ -122,35 +122,7 @@ class App(Tk):
 
         heading = Label(self.main_frame, text="Weather",
                         font="Helvetica 25 bold")
-        heading.grid(row=0, column=0, padx=10, pady=10)
-
-        settings_frame = Frame(self.main_frame)
-        settings_frame.grid(row=0, column=1, padx=(0, 10),
-                            pady=(10, 0), sticky="w")
-
-        self.unit_combobox = Combobox(
-            settings_frame,
-            values=["Metric", "Imperial"],
-            state="readonly",
-            font=("Helvetica 13"),
-            width=10,
-        )
-        self.unit_combobox.grid(row=0, column=0, padx=(0, 10), sticky="e")
-        self.unit_combobox.current(0 if self.units == "metric" else 1)
-        self.unit_combobox.bind("<<ComboboxSelected>>", self.update_settings)
-
-        self.color_mode_combobox = Combobox(
-            settings_frame,
-            values=["Light", "Dark"],
-            state="readonly",
-            font=("Helvetica 13"),
-            width=10,
-        )
-        self.color_mode_combobox.grid(row=0, column=1, sticky="e")
-        self.color_mode_combobox.current(
-            0 if self.color_mode == "light" else 1)
-        self.color_mode_combobox.bind(
-            "<<ComboboxSelected>>", self.update_settings)
+        heading.grid(row=0, column=0, padx=10, pady=10, columnspan=2)
 
         self.cityname = Label(
             self.main_frame, text="City: None", font=("Helvetica 15 bold")
@@ -179,6 +151,44 @@ class App(Tk):
         Button(buttons_frame, text="Exit", image=self.exit_icon, compound="left", command=self.destroy).grid(
             row=0, column=1, padx=10, pady=10, sticky="e"
         )
+        self.info_frame = Frame(self.main_frame, relief="sunken")
+        self.info_frame.grid(row=5, column=0, columnspan=2, padx=10, pady=10)
+
+        self.label_weather = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_weather.grid(row=0, column=0, columnspan=2)
+
+        self.label_temp = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_temp.grid(row=1, column=0, columnspan=2)
+
+        self.label_temp_max = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_temp_max.grid(row=2, column=0, columnspan=2)
+
+        self.label_temp_min = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_temp_min.grid(row=3, column=0, columnspan=2)
+
+        self.label_feels_like = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_feels_like.grid(row=4, column=0, columnspan=2)
+
+        self.label_humidity = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_humidity.grid(row=5, column=0, columnspan=2)
+
+        self.label_pressure = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_pressure.grid(row=6, column=0, columnspan=2)
+
+        self.label_visibility = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_visibility.grid(row=7, column=0, columnspan=2)
+
+        self.label_windspeed = Label(
+            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_windspeed.grid(row=8, column=0, columnspan=2)
 
         # Set variables
         self.searching: bool = False
@@ -187,6 +197,47 @@ class App(Tk):
         self.resize_app()
         self.deiconify()
         self.check_for_updates()
+
+    def settings_window(self) -> None:
+        self.settings = Toplevel()
+        settings_frame = Frame(self.settings)
+        settings_frame.grid(row=0, column=0, padx=(0, 10),
+                            pady=(10, 0), sticky="w")
+        self.units_label = Label(settings_frame, text="Units: ").grid(row=0, column=0)
+        self.unit_combobox = Combobox(
+            settings_frame,
+            values=["Metric", "Imperial"],
+            state="readonly",
+            font=("Helvetica 13"),
+            width=10,
+        )
+        self.unit_combobox.grid(row=0, column=2, padx=(0, 10), sticky="e")
+        self.unit_combobox.current(0 if self.units == "metric" else 1)
+        self.unit_combobox.bind("<<ComboboxSelected>>", self.update_settings)
+
+        self.color_mode_label = Label(settings_frame, text="Color Mode: ").grid(row=2, column=0)
+        self.color_mode_combobox = Combobox(
+            settings_frame,
+            values=["Light", "Dark"],
+            state="readonly",
+            font=("Helvetica 13"),
+            width=10,
+        )
+        self.color_mode_combobox.grid(row=2, column=2, sticky="e")
+        self.color_mode_combobox.current(
+            0 if self.color_mode == "light" else 1)
+        self.color_mode_combobox.bind(
+            "<<ComboboxSelected>>", self.update_settings)
+        
+        buttons = Frame(self.settings)
+        buttons.grid(row=1, column=0, columnspan=2,
+                           padx=10, pady=10, sticky="n")
+
+        Button(buttons,text="Exit", image=self.exit_icon, compound="left", command=self.settings.destroy).grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        self.resize_app()
+        self.settings.focus()
+        self.settings.attributes("-topmost", "true")
+        
 
     def about(self) -> None:
         """Display a messagebox with information about the app."""
@@ -342,52 +393,17 @@ class App(Tk):
         self.searchbar.delete(0, "end")
 
     def update_labels(self, data: list[str] = ["" for _ in range(9)]) -> None:
-        """Create new and specific labels with the given data."""
-        self.info_frame = Frame(self.main_frame, relief="sunken")
-        self.info_frame.grid(row=5, column=0, columnspan=2, padx=10, pady=10)
+        
+        self.label_weather.configure(text=data[0])
+        self.label_temp.configure(text=data[1])
+        self.label_temp_max.configure(text=data[2])
+        self.label_temp_min.configure(text=data[3])
+        self.label_feels_like.configure(text=data[4])
+        self.label_humidity.configure(text=data[5])
+        self.label_pressure.configure(text=data[6])
+        self.label_visibility.configure(text=data[7])
+        self.label_windspeed.configure(text=data[8])
 
-        self.label_weather = Label(
-            self.info_frame, text=data[0], font=("Helvetica 13"))
-        self.label_weather.grid(row=0, column=0, columnspan=2)
-
-        self.label_temp = Label(
-            self.info_frame, text=data[1], font=("Helvetica 13"))
-        self.label_temp.grid(row=1, column=0, columnspan=2)
-
-        self.label_temp_max = Label(
-            self.info_frame, text=data[2], font=("Helvetica 13")
-        )
-        self.label_temp_max.grid(row=2, column=0, columnspan=2)
-
-        self.label_temp_min = Label(
-            self.info_frame, text=data[3], font=("Helvetica 13")
-        )
-        self.label_temp_min.grid(row=3, column=0, columnspan=2)
-
-        self.label_feels_like = Label(
-            self.info_frame, text=data[4], font=("Helvetica 13")
-        )
-        self.label_feels_like.grid(row=4, column=0, columnspan=2)
-
-        self.label_humidity = Label(
-            self.info_frame, text=data[5], font=("Helvetica 13")
-        )
-        self.label_humidity.grid(row=5, column=0, columnspan=2)
-
-        self.label_pressure = Label(
-            self.info_frame, text=data[6], font=("Helvetica 13")
-        )
-        self.label_pressure.grid(row=6, column=0, columnspan=2)
-
-        self.label_visibility = Label(
-            self.info_frame, text=data[7], font=("Helvetica 13")
-        )
-        self.label_visibility.grid(row=7, column=0, columnspan=2)
-
-        self.label_windspeed = Label(
-            self.info_frame, text=data[8], font=("Helvetica 13")
-        )
-        self.label_windspeed.grid(row=8, column=0, columnspan=2)
 
     def update_settings(self, _: Event | None = None) -> None:
         """Updates the settings such as units and color mode"""
