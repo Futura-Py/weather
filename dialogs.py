@@ -5,11 +5,11 @@ from tkinter.ttk import Button, Frame, Label
 
 
 class Messagebox(Toplevel):
-    def __init__(self, parent, title, details, icon, *, buttons) -> bool:
+    def __init__(self, parent, title, details, icon, *, buttons) -> None:
         super().__init__()
         self.withdraw()
 
-        self.result = None
+        self.result: bool | None = None
 
         self.big_frame = Frame(self)
         self.big_frame.pack(fill="both", expand=True)
@@ -79,8 +79,8 @@ class Messagebox(Toplevel):
                 text=button_value[0],
                 width=18,
                 command=partial(self.on_button, button_value[1]),
-                style=self.style,
-                state=self.state,
+                style=self.style, # type: ignore
+                state=self.state, # type: ignore
             )
             if self.default:
                 self.button.bind("<Return>", self.button["command"])
