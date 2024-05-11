@@ -1,10 +1,9 @@
 name: Code Formatting
 
 on:
-  schedule: 
-  - cron: 30 05 15 * *
-  workflow_dispatch:
-
+  push:
+    branches:
+      - "*"
 
 jobs:
   formatting:
@@ -14,16 +13,11 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - uses: extractions/setup-just@v1
-        with:
-          just-version: 0.8 # optional semver specification, otherwise latest
+
       - name: Code Formatting (App)
         run: |
-          pip3 install ruff black isort autopep8
-          just format
-      - uses: fregante/setup-git-user@v1
-      - name: Commit
-        run: |
-          git add .
-          git commit -m "style(gh-actions): Code Formatting Workflow" -m "Either triggered by cron or workflow_dispatch"
-          git push --force
+          pip install ruff black isort pytest
+          pip install -r requirements.txt
+          black --diff .
+          isort --diff .
+          ruff check . # Should all be different files so we get different errors
