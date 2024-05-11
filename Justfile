@@ -11,7 +11,7 @@ black:
 
 install:
     python3 -m pip install -r requirements.txt
-    pip3 install autopep8
+    pip3 install autopep8 pyinstaller
     ruff --version
 
 run:
@@ -31,3 +31,9 @@ format:
     just autopep8
     just isort
     just ruff
+
+build:
+    pyinstaller weather.spec
+
+build-win:
+    pyinstaller weather-windows.spec

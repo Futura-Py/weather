@@ -7,6 +7,7 @@ from tkinter.ttk import Button, Frame, Label
 class Messagebox(Toplevel):
     def __init__(self, parent, title, details, icon, *, buttons) -> bool:
         super().__init__()
+        self.withdraw()
 
         self.result = None
 
@@ -15,15 +16,13 @@ class Messagebox(Toplevel):
         self.big_frame.columnconfigure(0, weight=1)
         self.big_frame.rowconfigure(0, weight=1)
 
-        info_frame = Frame(self.big_frame, padding=(
-            10, 12), style="Dialog_info.TFrame")
+        info_frame = Frame(self.big_frame, padding=(10, 12), style="Dialog_info.TFrame")
         info_frame.grid(row=0, column=0, sticky="nsew")
         info_frame.columnconfigure(1, weight=1)
         info_frame.rowconfigure(1, weight=1)
 
         try:
-            self.color = self.big_frame.tk.call(
-                "set", "themeColors::dialogInfoBg")
+            self.color = self.big_frame.tk.call("set", "themeColors::dialogInfoBg")
         except TclError:
             self.color = self.big_frame.tk.call(
                 "ttk::style", "lookup", "TFrame", "-background"
@@ -87,8 +86,7 @@ class Messagebox(Toplevel):
                 self.button.bind("<Return>", self.button["command"])
                 self.button.focus()
 
-            self.button.grid(row=0, column=index,
-                             sticky=self.sticky, padx=(0, 10))
+            self.button.grid(row=0, column=index, sticky=self.sticky, padx=(0, 10))
 
             self.button_frame.columnconfigure(index, weight=1)
 
@@ -124,6 +122,7 @@ class Messagebox(Toplevel):
             self.wm_attributes("-type", "dialog")
 
         self.grab_set()
+        self.deiconify()
 
         self.wait_window()
 
