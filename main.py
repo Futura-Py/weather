@@ -132,7 +132,7 @@ class App(Tk):
 
         self.searchbar = Entry(self.main_frame, width=42)
         self.searchbar.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
-        self.bind("<Return>", self.OWMCITY)
+        self.bind("<Return>", self.owm_search)
 
         # Set up buttons
         buttons_frame = Frame(self.main_frame)
@@ -142,7 +142,7 @@ class App(Tk):
         self.start_button = Button(
             buttons_frame,
             text="Search",
-            command=self.OWMCITY
+            command=self.owm_search
         )
         self.start_button.grid(row=0, column=0, padx=10, pady=10, sticky="w")
         Button(
@@ -287,7 +287,7 @@ class App(Tk):
         # Resize app
         self.resize_app()
 
-    def OWMCITY(self, _: Event | None = None) -> None:
+    def owm_search(self, _: Event | None = None) -> None:
         """Get the weather for a given city using the OpenWeatherMap API and display it in a label."""
 
         # Check if already searching
