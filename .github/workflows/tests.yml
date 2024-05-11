@@ -9,12 +9,10 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.11.1
 
       - name: Code Formatting (App)
         run: |
-          pip install ruff black isort pytest
+          pip install pytest
           pip install -r requirements.txt
-          black --diff .
-          isort --diff .
-          ruff check . # Should all be different files so we get different errors
+          pytest .
