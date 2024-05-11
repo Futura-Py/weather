@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from platform import system
-from tkinter import Event, Menu, PhotoImage, TclError, Tk, messagebox, Toplevel
+from tkinter import Event, Menu, PhotoImage, TclError, Tk, Toplevel, messagebox
 from tkinter.ttk import Button, Combobox, Entry, Frame, Label
 from webbrowser import open as openwebpage
 
@@ -78,13 +78,14 @@ class App(Tk):
 
             # Apple menus have special names and special commands
             self.app_menu = Menu(self.menubar, tearoff=0, name="apple")
-            self.menubar.add_cascade(label="Menu", menu=self.app_menu)
+            self.menubar.add_cascade(label="App", menu=self.app_menu)
         else:
             self.menubar = Menu(self)
             self.app_menu = Menu(self.menubar, tearoff=0)
-            self.menubar.add_cascade(label="Menu", menu=self.app_menu)
+            self.menubar.add_cascade(label="App", menu=self.app_menu)
         self.app_menu.add_command(label="About Weather", command=self.about)
-        self.app_menu.add_command(label="Settings", command=self.settings_window)
+        self.app_menu.add_command(
+            label="Settings", command=self.settings_window)
         self.config(menu=self.menubar)
 
         # Get file info
@@ -138,19 +139,17 @@ class App(Tk):
         buttons_frame.grid(row=4, column=0, columnspan=2,
                            padx=10, pady=10, sticky="n")
 
-        self.search_icon = PhotoImage(file="./assets/search.png")
-        self.exit_icon = PhotoImage(file="./assets/exit.png")
         self.start_button = Button(
             buttons_frame,
             text="Search",
-            image=self.search_icon,
-            command=self.OWMCITY,
-            compound="left"
+            command=self.OWMCITY
         )
         self.start_button.grid(row=0, column=0, padx=10, pady=10, sticky="w")
-        Button(buttons_frame, text="Exit", image=self.exit_icon, compound="left", command=self.destroy).grid(
-            row=0, column=1, padx=10, pady=10, sticky="e"
-        )
+        Button(
+            buttons_frame,
+            text="Exit",
+            command=self.destroy,
+        ).grid(row=0, column=1, padx=10, pady=10, sticky="e")
         self.info_frame = Frame(self.main_frame, relief="sunken")
         self.info_frame.grid(row=5, column=0, columnspan=2, padx=10, pady=10)
 
@@ -203,7 +202,8 @@ class App(Tk):
         settings_frame = Frame(self.settings)
         settings_frame.grid(row=0, column=0, padx=(0, 10),
                             pady=(10, 0), sticky="w")
-        self.units_label = Label(settings_frame, text="Units: ").grid(row=0, column=0)
+        self.units_label = Label(
+            settings_frame, text="Units: ").grid(row=0, column=0)
         self.unit_combobox = Combobox(
             settings_frame,
             values=["Metric", "Imperial"],
@@ -215,7 +215,9 @@ class App(Tk):
         self.unit_combobox.current(0 if self.units == "metric" else 1)
         self.unit_combobox.bind("<<ComboboxSelected>>", self.update_settings)
 
-        self.color_mode_label = Label(settings_frame, text="Color Mode: ").grid(row=2, column=0)
+        self.color_mode_label = Label(settings_frame, text="Color Mode: ").grid(
+            row=2, column=0
+        )
         self.color_mode_combobox = Combobox(
             settings_frame,
             values=["Light", "Dark"],
@@ -228,23 +230,26 @@ class App(Tk):
             0 if self.color_mode == "light" else 1)
         self.color_mode_combobox.bind(
             "<<ComboboxSelected>>", self.update_settings)
-        
+
         buttons = Frame(self.settings)
         buttons.grid(row=1, column=0, columnspan=2,
-                           padx=10, pady=10, sticky="n")
+                     padx=10, pady=10, sticky="n")
 
-        Button(buttons,text="Exit", image=self.exit_icon, compound="left", command=self.settings.destroy).grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        Button(
+            buttons,
+            text="Exit",
+            command=self.settings.destroy,
+        ).grid(row=0, column=0, padx=10, pady=10, sticky="w")
         self.resize_app()
         self.settings.focus()
         self.settings.attributes("-topmost", "true")
-        
 
     def about(self) -> None:
         """Display a messagebox with information about the app."""
 
         messagebox.showinfo(
             "About Weather",
-            "Weather is a simple weather app that uses the OpenWeatherMap API to get the weather for a given city.\nSearch and exit icons are acquired from Icons8.",
+            "Weather is a simple weather app that uses the OpenWeatherMap API to get the weather for a given city.",
             parent=self,
         )
 
@@ -263,8 +268,7 @@ class App(Tk):
         y_coords = int(self.wm_maxsize()[1] / 2 - minimum_height / 2)
 
         # Place app and make the minimum size the actual minimum size (non-infringable)
-        self.geometry(f"{minimum_width}x{
-                      minimum_height}+{x_coords}+{y_coords}")
+        self.geometry(f"{minimum_width}x{minimum_height}+{x_coords}+{y_coords}")
         self.wm_minsize(minimum_width, minimum_height)
 
     def reset_app(self, data: list[str] = ["" for _ in range(9)]) -> None:
@@ -327,8 +331,7 @@ class App(Tk):
 
         # Send request to OpenWeatherMap API
         response: Response = requests_get(
-            f"http://api.openweathermap.org/data/2.5/weather?q={
-                city}&appid={api_key}"
+            f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}"
         )
 
         # Check if request was successful
@@ -354,46 +357,37 @@ class App(Tk):
             [
                 f"Weather: {weather.status} ~ {weather.detailed_status}",
                 f"Current Temperature: {temperature.get('temp', None):.2f}°C",
-                f"Maximum Temperature: {
-                    temperature.get('temp_max', None):.2f}°C",
-                f"Minimum Temperature: {
-                    temperature.get('temp_min', None):.2f}°C",
+                f"Maximum Temperature: {temperature.get('temp_max', None):.2f}°C",
+                f"Minimum Temperature: {temperature.get('temp_min', None):.2f}°C",
                 f"Feels like {temperature.get('feels_like', None):.2f}°C",
                 f"Humidity: {main['humidity']:.2f}%",
                 f"Pressure: {main['pressure']:.2f} hPa",
                 f"Visibility: {weather.visibility(unit='kilometers'):.2f} km",
-                f"Wind Speed: {weather.wind(unit='meters_sec')[
-                    'speed']:.2f} meters per second",
+                f"Wind Speed: {weather.wind(unit='meters_sec')['speed']:.2f} meters per second",
             ]
             if self.units == "metric"
             else [
                 f"Weather: {weather.status} ~ {weather.detailed_status}",
-                f"Current Temperature: {
-                    (temperature.get('temp', None)*(9/5))+32:.2f}°F",
-                f"Maximum Temperature: {
-                    (temperature.get('temp_max', None)*(9/5))+32:.2f}°F",
-                f"Minimum Temperature: {
-                    (temperature.get('temp_min', None)*(9/5))+32:.2f}°F",
-                f"Feels like {
-                    (temperature.get('feels_like', None)*(9/5))+32:.2f}°F",
+                f"Current Temperature: {(temperature.get('temp', None)*(9/5))+32:.2f}°F",
+                f"Maximum Temperature: {(temperature.get('temp_max', None)*(9/5))+32:.2f}°F",
+                f"Minimum Temperature: {(temperature.get('temp_min', None)*(9/5))+32:.2f}°F",
+                f"Feels like {(temperature.get('feels_like', None)*(9/5))+32:.2f}°F",
                 f"Humidity: {main['humidity']:.2f}%",
                 f"Pressure: {main['pressure']*.0145038:.2f} psi",
                 f"Visibility: {weather.visibility(unit='miles'):.2f} miles",
-                f"Wind Speed: {weather.wind(unit='miles_hour')[
-                    'speed']:.2f} miles per hour",
+                f"Wind Speed: {weather.wind(unit='miles_hour')['speed']:.2f} miles per hour",
             ]
         )
 
         # Set the city name
-        self.cityname.configure(text=f"City: {data['name']}, {
-                                data['sys']['country']}")
+        self.cityname.configure(text=f"City: {data['name']}, {data['sys']['country']}")
 
         # Reset app
         self.reset_app(info)
         self.searchbar.delete(0, "end")
 
     def update_labels(self, data: list[str] = ["" for _ in range(9)]) -> None:
-        
+
         self.label_weather.configure(text=data[0])
         self.label_temp.configure(text=data[1])
         self.label_temp_max.configure(text=data[2])
@@ -403,7 +397,6 @@ class App(Tk):
         self.label_pressure.configure(text=data[6])
         self.label_visibility.configure(text=data[7])
         self.label_windspeed.configure(text=data[8])
-
 
     def update_settings(self, _: Event | None = None) -> None:
         """Updates the settings such as units and color mode"""
@@ -432,15 +425,11 @@ class App(Tk):
                     f"Current Temperature: {(float(self.label_temp.cget('text').split('°')[0].split(': ')[1]))*(9/5)+32:.2f}°F",  # noqa: E501
                     f"Maximum Temperature: {(float(self.label_temp_max.cget('text').split('°')[0].split(': ')[1]))*(9/5)+32:.2f}°F",  # noqa: E501
                     f"Minimum Temperature: {(float(self.label_temp_min.cget('text').split('°')[0].split(': ')[1])*(9/5))+32:.2f}°F",  # noqa: E501
-                    f"Feels like {float(self.label_feels_like.cget(
-                        'text').split('°')[0].split(' ')[2])*(9/5)+32:.2f}°F",
+                    f"Feels like {float(self.label_feels_like.cget('text').split('°')[0].split(' ')[2])*(9/5)+32:.2f}°F",
                     self.label_humidity.cget("text"),
-                    f"Pressure: {float(self.label_pressure.cget(
-                        'text').split(' ')[1])*.0145038:.2f} psi",
-                    f"Visibility: {float(self.label_visibility.cget(
-                        'text').split(' ')[1])*0.621371:.2f} miles",
-                    f"Wind Speed: {float(self.label_windspeed.cget(
-                        'text').split(' ')[2])*0.621371:.2f} miles per hour",
+                    f"Pressure: {float(self.label_pressure.cget('text').split(' ')[1])*.0145038:.2f} psi",
+                    f"Visibility: {float(self.label_visibility.cget('text').split(' ')[1])*0.621371:.2f} miles",
+                    f"Wind Speed: {float(self.label_windspeed.cget('text').split(' ')[2])*0.621371:.2f} miles per hour",
                 ]
             )
             self.write_file()
@@ -457,15 +446,11 @@ class App(Tk):
                     f"Current Temperature: {(5/9)*((float(self.label_temp.cget('text').split('°')[0].split(': ')[1])-32)):.2f}°C",  # noqa: E501
                     f"Maximum Temperature: {(5/9)*((float(self.label_temp_max.cget('text').split('°')[0].split(': ')[1])-32)):.2f}°C",  # noqa: E501
                     f"Minimum Temperature: {(5/9)*((float(self.label_temp_min.cget('text').split('°')[0].split(': ')[1])-32)):.2f}°C",  # noqa: E501
-                    f"Feels like {
-                        (5/9)*((float(self.label_feels_like.cget('text').split('°')[0].split(' ')[2])-32)):.2f}°C",
+                    f"Feels like {(5/9)*((float(self.label_feels_like.cget('text').split('°')[0].split(' ')[2])-32)):.2f}°C",
                     self.label_humidity.cget("text"),
-                    f"Pressure: {float(self.label_pressure.cget(
-                        'text').split(' ')[1])*68.9476:.2f} hPa",
-                    f"Visibility: {float(self.label_visibility.cget(
-                        'text').split(' ')[1])*1.60934:.2f} km",
-                    f"Wind Speed: {float(self.label_windspeed.cget('text').split(' ')[
-                                         2])*1.60934:.2f} meters per second",
+                    f"Pressure: {float(self.label_pressure.cget('text').split(' ')[1])*68.9476:.2f} hPa",
+                    f"Visibility: {float(self.label_visibility.cget('text').split(' ')[1])*1.60934:.2f} km",
+                    f"Wind Speed: {float(self.label_windspeed.cget('text').split(' ')[2])*1.60934:.2f} meters per second",
                 ]
             )
             self.write_file()
@@ -483,11 +468,8 @@ class App(Tk):
     def check_for_updates(self) -> None:
         # Check github for newer version
 
-        self.api_response = requests_get(
-            "https://api.github.com/repos/Futura-Py/weather/releases/latest"
-        )
-        self.latest_tag = self.api_response.json()[
-            "tag_name"].removeprefix("v")
+        self.api_response = requests_get("https://api.github.com/repos/Futura-Py/weather/releases/latest")
+        self.latest_tag = self.api_response.json()["tag_name"].removeprefix("v")
 
         if VERSION != self.latest_tag:
             self.doupdate = Messagebox(
