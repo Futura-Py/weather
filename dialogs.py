@@ -79,8 +79,8 @@ class Messagebox(Toplevel):
                 text=button_value[0],
                 width=18,
                 command=partial(self.on_button, button_value[1]),
-                style=self.style, # type: ignore
-                state=self.state, # type: ignore
+                style=self.style,  # type: ignore
+                state=self.state,  # type: ignore
             )
             if self.default:
                 self.button.bind("<Return>", self.button["command"])

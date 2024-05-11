@@ -114,7 +114,7 @@ class App(Tk):
                 self.iconphoto(False, logo_img)
         except TclError:
             try:
-                self.iconphoto("./assets/icon.ico") # type: ignore
+                self.iconphoto("./assets/icon.ico")  # type: ignore
             except TclError:
                 pass
 
