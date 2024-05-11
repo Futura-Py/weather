@@ -84,8 +84,7 @@ class App(Tk):
             self.app_menu = Menu(self.menubar, tearoff=0)
             self.menubar.add_cascade(label="App", menu=self.app_menu)
         self.app_menu.add_command(label="About Weather", command=self.about)
-        self.app_menu.add_command(
-            label="Settings", command=self.settings_window)
+        self.app_menu.add_command(label="Settings", command=self.settings_window)
         self.config(menu=self.menubar)
 
         # Get file info
@@ -121,8 +120,7 @@ class App(Tk):
         self.main_frame = Frame(self)
         self.main_frame.grid()
 
-        heading = Label(self.main_frame, text="Weather",
-                        font="Helvetica 25 bold")
+        heading = Label(self.main_frame, text="Weather", font="Helvetica 25 bold")
         heading.grid(row=0, column=0, padx=10, pady=10, columnspan=2)
 
         self.cityname = Label(
@@ -136,13 +134,10 @@ class App(Tk):
 
         # Set up buttons
         buttons_frame = Frame(self.main_frame)
-        buttons_frame.grid(row=4, column=0, columnspan=2,
-                           padx=10, pady=10, sticky="n")
+        buttons_frame.grid(row=4, column=0, columnspan=2, padx=10, pady=10, sticky="n")
 
         self.start_button = Button(
-            buttons_frame,
-            text="Search",
-            command=self.owm_search
+            buttons_frame, text="Search", command=self.owm_search
         )
         self.start_button.grid(row=0, column=0, padx=10, pady=10, sticky="w")
         Button(
@@ -153,40 +148,31 @@ class App(Tk):
         self.info_frame = Frame(self.main_frame, relief="sunken")
         self.info_frame.grid(row=5, column=0, columnspan=2, padx=10, pady=10)
 
-        self.label_weather = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_weather = Label(self.info_frame, text="", font=("Helvetica 13"))
         self.label_weather.grid(row=0, column=0, columnspan=2)
 
-        self.label_temp = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_temp = Label(self.info_frame, text="", font=("Helvetica 13"))
         self.label_temp.grid(row=1, column=0, columnspan=2)
 
-        self.label_temp_max = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_temp_max = Label(self.info_frame, text="", font=("Helvetica 13"))
         self.label_temp_max.grid(row=2, column=0, columnspan=2)
 
-        self.label_temp_min = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_temp_min = Label(self.info_frame, text="", font=("Helvetica 13"))
         self.label_temp_min.grid(row=3, column=0, columnspan=2)
 
-        self.label_feels_like = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_feels_like = Label(self.info_frame, text="", font=("Helvetica 13"))
         self.label_feels_like.grid(row=4, column=0, columnspan=2)
 
-        self.label_humidity = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_humidity = Label(self.info_frame, text="", font=("Helvetica 13"))
         self.label_humidity.grid(row=5, column=0, columnspan=2)
 
-        self.label_pressure = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_pressure = Label(self.info_frame, text="", font=("Helvetica 13"))
         self.label_pressure.grid(row=6, column=0, columnspan=2)
 
-        self.label_visibility = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_visibility = Label(self.info_frame, text="", font=("Helvetica 13"))
         self.label_visibility.grid(row=7, column=0, columnspan=2)
 
-        self.label_windspeed = Label(
-            self.info_frame, text="", font=("Helvetica 13"))
+        self.label_windspeed = Label(self.info_frame, text="", font=("Helvetica 13"))
         self.label_windspeed.grid(row=8, column=0, columnspan=2)
 
         # Set variables
@@ -195,15 +181,15 @@ class App(Tk):
         # Resize, deiconify and check for updates
         self.resize_app()
         self.deiconify()
-        self.check_for_updates()
+        self.update_idletasks()
+        self.after_idle(lambda: self.check_for_updates())
 
     def settings_window(self) -> None:
         self.settings = Toplevel()
+        self.settings.withdraw()
         settings_frame = Frame(self.settings)
-        settings_frame.grid(row=0, column=0, padx=(0, 10),
-                            pady=(10, 0), sticky="w")
-        self.units_label = Label(
-            settings_frame, text="Units: ").grid(row=0, column=0)
+        settings_frame.grid(row=0, column=0, padx=(0, 10), pady=(10, 0), sticky="w")
+        self.units_label = Label(settings_frame, text="Units: ").grid(row=0, column=0)
         self.unit_combobox = Combobox(
             settings_frame,
             values=["Metric", "Imperial"],
@@ -226,14 +212,11 @@ class App(Tk):
             width=10,
         )
         self.color_mode_combobox.grid(row=2, column=2, sticky="e")
-        self.color_mode_combobox.current(
-            0 if self.color_mode == "light" else 1)
-        self.color_mode_combobox.bind(
-            "<<ComboboxSelected>>", self.update_settings)
+        self.color_mode_combobox.current(0 if self.color_mode == "light" else 1)
+        self.color_mode_combobox.bind("<<ComboboxSelected>>", self.update_settings)
 
         buttons = Frame(self.settings)
-        buttons.grid(row=1, column=0, columnspan=2,
-                     padx=10, pady=10, sticky="n")
+        buttons.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="n")
 
         Button(
             buttons,
@@ -243,6 +226,7 @@ class App(Tk):
         self.resize_app()
         self.settings.focus()
         self.settings.attributes("-topmost", "true")
+        self.settings.deiconify()
 
     def about(self) -> None:
         """Display a messagebox with information about the app."""
@@ -468,8 +452,15 @@ class App(Tk):
     def check_for_updates(self) -> None:
         # Check github for newer version
 
-        self.api_response = requests_get("https://api.github.com/repos/Futura-Py/weather/releases/latest")
-        self.latest_tag = self.api_response.json()["tag_name"].removeprefix("v")
+        try:
+            self.api_response = requests_get(
+                "https://api.github.com/repos/Futura-Py/weather/releases/latest",
+                timeout=50,
+            )
+            self.latest_tag = self.api_response.json()["tag_name"].removeprefix("v")
+        except TimeoutError:
+            # Couldn't access the internet, no need to bother the user
+            return
 
         if VERSION != self.latest_tag:
             self.doupdate = Messagebox(
