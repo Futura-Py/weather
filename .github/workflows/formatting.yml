@@ -1,9 +1,6 @@
 name: Code Formatting
 
-on:
-  push:
-    branches:
-      - "*"
+on: push
 
 jobs:
   formatting:
