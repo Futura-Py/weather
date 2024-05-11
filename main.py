@@ -6,16 +6,16 @@ from tkinter import Event, Menu, PhotoImage, TclError, Tk, Toplevel, messagebox
 from tkinter.ttk import Button, Combobox, Entry, Frame, Label
 from webbrowser import open as openwebpage
 
-from dialogs import Messagebox
 from platformdirs import user_data_dir
 from pyowm import OWM
-from pyowm.commons.exceptions import (APIRequestError,
-                                      InvalidSSLCertificateError)
+from pyowm.commons.exceptions import APIRequestError, InvalidSSLCertificateError
 from pyowm.commons.exceptions import NotFoundError as OWMNotFoundError
 from pyowm.commons.exceptions import TimeoutError
 from requests import Response
 from requests import get as requests_get
 from sv_ttk import set_theme
+
+from dialogs import Messagebox
 
 VERSION = "0.1"
 
