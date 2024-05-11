@@ -30,7 +30,9 @@ data_file = Path(str(data_dir / "data.txt"))
 if not data_dir.exists():
     # Create the directory if it doesn't exist
     data_dir.mkdir(parents=True)
-    data_file.touch("dark\nmetric")
+    data_file.touch()
+    with open(data_file, "r+") as file:
+        file.write("dark\nmetric")
 
 # Ensure file exists and contains the correct data
 if data_file.exists():
@@ -112,7 +114,7 @@ class App(Tk):
                 self.iconphoto(False, logo_img)
         except TclError:
             try:
-                self.iconphoto("./assets/icon.ico")
+                self.iconphoto("./assets/icon.ico")  # type: ignore
             except TclError:
                 pass
 
@@ -297,6 +299,11 @@ class App(Tk):
             self.reset_app()
             return
 
+        # Removing redundancy
+        def failed_weather_request() -> None:
+            self.cityname.configure(text="City: Not Found")
+            self.reset_app()
+
         # Check if city exists
         try:
             observation = mgr.weather_at_place(city)
@@ -306,8 +313,12 @@ class App(Tk):
             or TimeoutError
             or InvalidSSLCertificateError
         ):
-            self.cityname.configure(text="City: Not Found")
-            self.reset_app()
+            failed_weather_request()
+            return
+
+        # Check that observation is not None
+        if observation is None:
+            failed_weather_request()
             return
 
         # Get weather data
